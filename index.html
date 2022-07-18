@@ -1,0 +1,2528 @@
+<head>
+  <meta charset="utf-8">
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"
+    integrity="sha512-5erpERW8MxcHDF7Xea9eBQPiRtxbse70pFcaHJuOhdEBQeAxGQjUwgJbuBDWve+xP/u5IoJbKjyJk50qCnMD7A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <meta name="author" content="KB">
+  <meta name="keywords" content="P2E, Gooeys, Polygon, Play-To-Earn, Play, Earn, Blockchain, Crypto, Game">
+  <meta name="description" content="Gooeys is a Play-To-Earn game from the Dogira Studios team, featuring a fully tokenized economy – where everything from your in-game characters to quest rewards are fully on-chain, and tradable on popular platforms such as OpenSea.">
+  <meta property="og:image" content="https://gooeys.io/wp-content/uploads/2022/02/p2e-r.png">
+  <meta property="og:description" content="Gooeys is secured by Chainlink VRF, ensuring that all random rolls such as character/NFT Generation and Quest Rewards are on-chain, and provably fair.">
+  <meta property="og:title" content="Gooeys P2E">
+  <meta name="twitter:title" content="Gooeys P2E">
+  <link rel="shortcut icon" href="https://gooeys.io/wp-content/uploads/2022/02/p2e-r.png" type="https://gooeys.io/wp-content/uploads/2022/02/p2e-r.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Gooeys</title>
+
+    <style>
+
+      body {
+        margin: 0px;
+        padding: 0px;
+        font-family: Arial, Helvetica, sans-serif;
+
+        background: radial-gradient(1.5em 6.28571em at 1.95em, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.25) 55%, rgba(255, 255, 255, 0) 55%) 0 0, radial-gradient(1.5em 6.28571em at -0.45em, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.25) 55%, rgba(255, 255, 255, 0) 55%) 1.5em 5.5em, radial-gradient(2.3em 4.57143em at 2.99em, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.3) 55%, rgba(255, 255, 255, 0) 55%) 0 0, radial-gradient(2.3em 4.57143em at -0.69em, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.3) 55%, rgba(255, 255, 255, 0) 55%) 2.3em 4em, radial-gradient(3.5em 6.28571em at 4.55em, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.25) 55%, rgba(255, 255, 255, 0) 55%) 0 0, radial-gradient(3.5em 6.28571em at -1.05em, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.25) 55%, rgba(255, 255, 255, 0) 55%) 3.5em 5.5em, radial-gradient(#15ffa5, #00ced1);
+        background-color: mediumspringgreen;
+        background-size: 1.5em 11em, 1.5em 11em, 2.3em 8em, 2.3em 8em, 3.5em 11em, 3.5em 11em, 100% 100%;
+        background-repeat: repeat;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      span {
+        color: rgb(0, 59, 66);
+        font-size: 12px;
+        font-weight: 700;
+        margin: 2px 0px;
+        /* text-shadow: -1px -1px 0 rgb(255, 255, 255); */
+        /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
+      }
+
+      button {
+        height:40px;
+        width:max-content;
+        background:rgb(30, 156, 160);
+        text-transform:uppercase;
+        color:rgb(245, 245, 245);
+        font-weight:700;
+        letter-spacing: 1px;
+        border: 2.5px solid rgb(164, 81, 197);
+        font-size: 15px;
+        outline:none;
+        cursor: pointer;
+        border-radius: 10px;
+        padding: 0px 10px;
+      }
+
+      button {
+        transition:all .2s ease-in-out;
+      }
+
+      button:hover {
+        background:rgb(46, 227, 233);
+        text-shadow:
+          0 0 10px rgba(255,255,255, 1),
+          0 0 50px rgba(255, 255, 255, .8),
+          0 0 75px rgba(255, 255, 255, .6),
+          0 0 76px rgba(255, 255, 255, .4),
+          0 0 77px rgba(255, 255, 255, .5),
+          0 0 78px rgba(255, 255, 255, .4),
+      }
+
+      .funds-container {
+        display: grid;
+        justify-items: left;
+        padding-left: 30px;
+      }
+
+      .funds-container > div:nth-child(1) {
+        margin: 20px 0px -25px 0px;
+      }
+
+      .funds-container > div:nth-child(2) {
+        margin: 0px 0px 20px 0px;
+      }
+
+      #Dogira {
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;
+      }
+
+      #Dogira > p {
+        margin: 7px;
+      }
+
+      #GOO {
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;
+      }
+
+      #GOO > p {
+        margin: 7px;
+      }
+
+      .logo-container {
+        display: flex;
+        justify-content: center;
+        margin: 25px 0px;
+      }
+
+      .logo-container > div > img {
+        width: 240px;
+        height: 140px;
+      }
+
+      .log-container {
+        display: grid;
+        justify-items: center;
+        padding-right: 30px;
+      }
+
+      .log-container > p {
+        margin: 45px 0px 0px 0px;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;
+      }
+
+      .log-container > button {
+        margin: 0px 0px 75px 0px;
+      }
+
+      #MyGooeys {
+        display: flex;
+        justify-content: center;
+        margin: 70px 0px 50px 0px;
+      }
+
+      #Gooey-Container {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        grid-gap: 10px;
+        border: 5px solid rgba(49, 33, 63, 0.5);
+        border-radius: 10px;
+        background-color: rgba(173, 104, 236, 0.5);
+        padding: 10px;
+      }
+
+
+
+
+
+/************** Modal ********************************************************************/
+
+      /* The Modal (background) */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close:hover,
+      .close:focus {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+/************** Modal ********************************************************************/
+
+
+
+
+
+      .Quests-Container {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        grid-gap: 10px;
+        justify-items: center;
+        padding: 10px;
+      }
+
+      @media (min-width: 530px) and (max-width: 785px) {
+        .Quests-Container {
+          padding: 50px 0px;
+          grid-template-columns: auto auto !important;
+        }
+      }
+
+      @media (min-width: 130px) and (max-width: 529px) {
+        .Quests-Container {
+          padding: 50px 0px;
+          grid-template-columns: auto !important;
+        }
+      }
+
+      .Quest {
+        background-color: #707070;
+        border: 2px solid rgb(31, 29, 29);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        color: aliceblue;
+        text-shadow: 1px 1px 0 rgb(0, 0, 0);
+      }
+
+      .Quest:nth-child(2) {
+        background-color: #698849;
+      }
+
+      .Quest:nth-child(3) {
+        background-color: #516890;
+      }
+
+      .Quest:nth-child(4) {
+        background-color: #6c5190;
+      }
+
+      .Quest:nth-child(5) {
+        background-color: #b17a43;
+      }
+
+      .Quest:nth-child(6) {
+        background-color: #b04845;
+      }
+
+      .Quest > h4 {
+        font-size: 20px;
+        text-align: center;
+        margin: 0px 0px 10px 0px;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+
+      .Quest > div {
+        margin: 0px 0px 10px 0px;
+      }
+      
+      .Quest > div > p {
+        text-align: center;
+        margin: 5px;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+
+      .Quest > div > p:nth-child(1) {
+        text-align: center;
+        margin: 5px;
+        color:#e0b3ff; 
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+
+      .Quest > div > p:nth-child(3) {
+        text-align: center;
+        margin: 5px;
+        color:#e0b3ff; 
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+
+      .quest-img {
+        margin: 0px 5px 0px 0px;
+        width: 20px;
+        height: 20px;
+      }
+
+      .Gooey {
+        display: grid;
+        justify-items: center;
+        max-width: 200px;
+      }
+
+      .Gooey > div {
+        display: grid;
+        grid-template-columns: auto auto;
+        width: 99%;
+        width: -webkit-fill-available;
+        border-right: 1px solid rgba(0, 0, 0);
+        border-left: 1px solid rgba(0, 0, 0);
+        border-bottom: 1px solid rgba(0, 0, 0);
+        background-color: rgb(243, 227, 247);
+      }
+
+      .Gooey > div:nth-child(2) {
+        justify-content: center;
+      }
+      
+      .Gooey > div > p {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 0px 5px;
+        margin: 5px 0px;
+      }
+
+      .Gooey > div:nth-child(5) > p:nth-child(1) {
+        font-size: 10px;
+        font-weight: 700;
+        margin: 0px;
+      }
+
+      .Gooey > div:nth-child(5) > p {
+        padding: 5px 3px;
+        margin: 0px;
+      }
+
+      .Gooey > div:nth-child(5) {
+        border-top: none;
+        grid-template-columns: auto auto auto auto auto;
+        text-align: center; 
+      }
+
+      .Gooey > div:nth-child(6) > p:nth-child(1) {
+        font-size: 10px;
+        font-weight: 700;
+        margin: 0px;
+      }
+
+      .Gooey > div:nth-child(6) > p {
+        padding: 5px 3px;
+        margin: 0px;
+      }
+
+      .Gooey > div:nth-child(6) {
+        border-top: none;
+        /* border-bottom: none; */
+        grid-template-columns: auto auto auto auto auto;
+        text-align: center; 
+      }
+
+      .Gooey > div:nth-child(7) {
+        /* border-top: none; */
+        display: grid;
+        grid-template-columns: auto;
+        justify-items: center;
+        padding: 5px 0px;
+        grid-gap: 5px;
+      }
+
+      .Gooey > div:nth-child(7) > button {
+        width: 170px;
+        height: 35px;
+        font-size: 13px;
+        font-weight: 700;
+        margin: 5px 0px;
+      }
+
+      /* .Gooey > div:nth-child(3) > p:nth-child(5) {
+        text-align: center;
+        font-size: 11.7px;
+        font-weight: 700;
+        padding: 0px 10px;
+        margin: 5px 0px;
+        width: 150%;
+      } */
+
+      #Gooey-Container > .Gooey > img {
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+        border-radius: 10px 10px 0px 0px;
+        margin: 0px;
+      }
+
+      @media (min-width: 450px) and (max-width: 660px) {
+        #Gooey-Container {
+          grid-template-columns: auto auto;
+        }
+      }
+
+      @media (min-width: 150px) and (max-width: 449px) {
+        #Gooey-Container {
+          grid-template-columns: auto;
+        }
+
+        header {
+          display: grid;
+          justify-content: center;
+        }
+
+        .funds-container {
+          display: grid !important;
+          justify-items: center !important;
+          align-items: center !important;
+          grid-template-columns: auto auto !important;
+          padding: 0px !important;
+        }
+        .funds-container > div {
+          display: grid !important;
+          justify-content: center !important;
+          align-items: center !important;
+          margin: 0px !important;
+          /* grid-template-columns: auto auto; */
+        }
+
+        .log-container {
+          padding: 0px;
+        }
+      }
+
+      .Send-Quest-Container {
+        margin-top: 100px;
+        display: grid;
+        justify-items: center;
+      }
+
+      .Send-Quest-Container > div {
+        display: grid;
+        justify-items: center;
+        grid-template-columns: auto auto auto;
+        grid-gap: 40px 80px;
+      }
+
+      .Send-Quest-Container > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 20px 5px;
+      }
+
+      .Send-Quest-Container > div > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 5px;
+      }
+
+      .transfer-button-container {
+        display: flex !important;
+        justify-content: center !important;
+        padding: 5px;
+
+        display: grid !important;
+        justify-items: center;
+        padding: 5px;
+        width: 94% !important;
+        grid-auto-columns: auto;
+        justify-content: center;
+      }
+
+      .modal-content2 > div > div {
+        display: grid;
+        justify-items: center;
+      }
+
+      .modal-content2 > div > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 15px;
+      }
+
+
+
+
+
+/************** Modal2 ********************************************************************/
+
+      /* The Modal (background) */
+      .modal2 {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content2 {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close2 {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close2:hover,
+      .close2.hidden {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+/************** Modal2 ********************************************************************/
+
+
+
+
+
+
+
+
+
+
+      .Fruits-Container {
+        display: grid;
+        justify-items: center;
+        grid-template-columns: auto auto auto auto auto;
+        grid-gap: 50px 10px;
+        padding: 50px 10px;
+      }
+
+      @media (min-width: 850px) and (max-width: 1000px) {
+        .Fruits-Container {
+          grid-template-columns: auto auto auto auto;
+          grid-gap: 50px 10px;
+        }
+      }
+
+      @media (min-width: 630px) and (max-width: 849px) {
+        .Fruits-Container {
+          grid-template-columns: auto auto auto;
+          grid-gap: 50px 10px;
+        }
+      }
+
+      @media (min-width: 420px) and (max-width: 629px) {
+        .Fruits-Container {
+          grid-template-columns: auto auto;
+          grid-gap: 50px 10px;
+        }
+      }
+
+      @media (min-width: 120px) and (max-width: 419px) {
+        .Fruits-Container {
+          grid-template-columns: auto;
+          grid-gap: 35px 0px;
+        }
+      }
+
+      .Fruit {
+        display: grid;
+        justify-items: center;
+        padding: 10px;
+        background-color: rgb(175, 244, 247);
+        border: 5px solid rgb(252, 252, 252);
+        border-radius: 25px;
+        font-size: 14px;
+      }
+
+      .Fruit > div > p {
+        margin: 10px;
+        font-weight: 600;
+      }
+
+      .Fruit > div {
+        margin: 0px;
+      }
+
+
+      .Fruit > div:nth-child(1) {
+        display: grid;
+        justify-items: center;
+      }
+
+      .Fruit > div:nth-child(1) > img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 2.5px solid #383838;
+      }
+
+      .Fruit > div:nth-child(3) {
+        display: grid;
+        justify-items: center;
+      }
+
+      .Fruit > div:nth-child(3) > p {
+        margin: 2.5px;
+      }
+
+      .Fruit > div:nth-child(4) > button {
+        margin-top: 20px;
+        font-size: 14px;
+      }
+
+      .Fruit > div:nth-child(4) > div {
+        margin-top: 7px;
+      }
+
+      .fruit-amount {
+        display: grid;
+        justify-items: center;
+        padding-top: 10px;
+      }
+
+      .fruit-amount > p {
+  	    margin: 2.5px;
+      }
+
+      .fruit-amount > p:nth-child(2) {
+  	    font-size: 17px;
+        font-weight: 700;
+      }
+
+
+
+
+
+
+
+
+
+
+/************** Modal3 ********************************************************************/
+
+      /* The Modal (background) */
+      .modal3 {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content3 {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close3 {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close3:hover,
+      .close3.hidden {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+/************** Modal3 ********************************************************************/
+
+/************** Modal4 ********************************************************************/
+
+      /* The Modal (background) */
+      .modal4 {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content4 {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close4 {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close4:hover,
+      .close4.hidden {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+      .modal-content4 > div > div {
+        display: grid;
+        justify-items: center;
+      }
+
+      .modal-content4 > div > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 15px;
+      }
+
+      .modal-content4 > div > div > div > p {
+        margin: 25px 0px 0px 0px;
+      }
+
+      .modal-content4 > div > div > div > input {
+        margin: 0px;
+      }
+
+      .modal-content4 > div > div > div > button {
+        margin-top: 25px;
+      }
+
+/************** Modal4 ********************************************************************/
+
+/************** Modal5 ********************************************************************/
+
+      /* The Modal (background) */
+      .modal5 {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content5 {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close5 {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close5:hover,
+      .close5.hidden {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+      .modal-content5 > div > div {
+        display: grid;
+        justify-items: center;
+      }
+
+      .modal-content5 > div > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 15px;
+      }
+/************** Modal5 ********************************************************************/
+
+
+    </style>
+
+  </head>
+  
+  <body>
+
+    <header>
+
+      <div class="funds-container">
+        <div id="Dogira">
+          <p>Dogira: </p>
+        </div>
+        <div id="GOO">
+          <p>GOO: </p>
+        </div>
+      </div>
+
+      <div class="logo-container">
+        <div>
+          <img src="https://playgooeys.com/TemplateData/img/Logo.png" alt="Gooeys">
+        </div>
+      </div>
+
+      <div class="log-container">
+        <p id="userAddress"></p>
+        <button id="loginButton" onclick="loginWithEth()">
+          Login
+        </button>
+        <button id="logoutButton" onclick="logout()">
+          Logout
+        </button>
+      </div>
+
+    </header>
+
+    <!-- https://playgooeys.com/TemplateData/img/Logo.png -->
+
+    <section id="MyGooeys">
+
+      <div id="Gooey-Container">
+        <div id="No-Gooeys">You don't have any Gooeys in your Wallet. Get one at <a href="https://opensea.io/collection/gooeysp2e">Opensea!</a>
+        </div>
+      </div>
+
+      <div id="modal-container" class="modal">
+          <div class="modal-content">
+              <span onclick="modal.style.display='none'" class="close">&times;</span>
+
+              <div class="Quests-Container">
+                
+                <div class="Quest">
+                  <h4>Common (10H)</h4>
+                  <div>
+                    <p>$GOO Reward</p>
+                    <p>3,780 - 4,536</p>
+                  </div>
+                  <div>
+                    <p>Fruit Reward</p>
+                    <p>0 - 1</p>
+                  </div>
+                  <div>
+                    <p>Quest Difficulty</p>
+                    <p>1500</p>
+                    <p>Succes Chance</p>
+                    <p id="chance1"></p>
+                  </div>
+                  <div>
+                    <button id="0" onclick="getQuestId(this); modal.style.display='none'">Send to Quest</button>
+                  </div>
+                </div>
+
+                <div class="Quest">
+                  <h4>Uncommon (18H)</h4>
+                  <div>
+                    <p>$GOO Reward</p>
+                    <p>9,504 - 11,232</p>
+                  </div>
+                  <div>
+                    <p>Fruit Reward</p>
+                    <p>0 - 2</p>
+                  </div>
+                  <div>
+                    <p>Quest Difficulty</p>
+                    <p>2300</p>
+                    <p>Succes Chance</p>
+                    <p id="chance2"></p>
+                  </div>
+                  <div>
+                    <button id="1" onclick="getQuestId(this); modal.style.display='none'">Send to Quest</button>
+                  </div>
+                </div>
+
+                <div class="Quest">
+                  <h4>Rare (36H)</h4>
+                  <div>
+                    <p>$GOO Reward</p>
+                    <p>25,872 - 32,928</p>
+                  </div>
+                  <div>
+                    <p>Fruit Reward</p>
+                    <p>1 - 2</p>
+                  </div>
+                  <div>
+                    <p>Quest Difficulty</p>
+                    <p>2800</p>
+                    <p>Succes Chance</p>
+                    <p id="chance3"></p>
+                  </div>
+                  <div>
+                    <button id="2" onclick="getQuestId(this); modal.style.display='none'">Send to Quest</button>
+                  </div>
+                </div>
+
+                <div class="Quest">
+                  <h4>Epic (60H)</h4>
+                  <div>
+                    <p>$GOO Reward</p>
+                    <p>57,024 - 71,280</p>
+                  </div>
+                  <div>
+                    <p>Fruit Reward</p>
+                    <p>1 - 3</p>
+                  </div>
+                  <div>
+                    <p>Quest Difficulty</p>
+                    <p>3600</p>
+                    <p>Succes Chance</p>
+                    <p id="chance4"></p>
+                  </div>
+                  <div>
+                    <button id="3" onclick="getQuestId(this); modal.style.display='none'">Send to Quest</button>
+                  </div>
+                </div>
+
+                <div class="Quest">
+                  <h4>Legendary (72H)</h4>
+                  <div>
+                    <p>$GOO Reward</p>
+                    <p>70,560 - 105,840</p>
+                  </div>
+                  <div>
+                    <p>Fruit Reward</p>
+                    <p>2 - 4</p>
+                  </div>
+                  <div>
+                    <p>Quest Difficulty</p>
+                    <p>4300</p>
+                    <p>Succes Chance</p>
+                    <p id="chance5"></p>
+                  </div>
+                  <div>
+                    <button id="4" onclick="getQuestId(this); modal.style.display='none'">Send to Quest</button>
+                  </div>
+                </div>
+
+                <div class="Quest">
+                  <h4>Mythical (120H)</h4>
+                  <div>
+                    <p>$GOO Reward</p>
+                    <p>164,346 - 227,556</p>
+                  </div>
+                  <div>
+                    <p>Fruit Reward</p>
+                    <p>4 - 8</p>
+                  </div>
+                  <div>
+                    <p>Quest Difficulty</p>
+                    <p>5000</p>
+                    <p>Succes Chance</p>
+                    <p id="chance6"></p>
+                  </div>
+                  <div>
+                    <button id="5" onclick="getQuestId(this); modal.style.display='none'">Send to Quest</button>
+                  </div>
+                </div>
+                
+              </div>
+
+        </div>
+      </div>
+      <div id="modal-container2" class="modal2">
+        <div class="modal-content2">
+          <span onclick="modal2.style.display='none'" class="close2">&times;</span>
+
+          <div>
+            
+            <div>
+              <h4>Receiving Wallet</h4>
+              <div>
+                <input id="gooey-receiver" onblur="getValueWallet()" type="string" placeholder="Wallet Address">
+                <button onclick="getTransferWallet(); modal2.style.display='none'">Transfer Gooey</button>
+              </div>
+            </div>
+            
+          </div>
+      </div>
+
+    </section>
+
+    <!-- <section id="Quests">
+      <div class="Send-Quest-Container">
+        <h1>Quests</h1>
+
+        <br>
+
+        <div>
+
+          <div>
+            <h3>Send to Quest</h3>
+            <div>
+              <label for="id">Your Gooey ID</label>
+              <input type="number"
+                id="sendQuestGooeyId" placeholder="Gooey ID" onblur="getValueSendQuest1()"/>
+            </div>
+            <div>
+              <label for="sendQuestId">Quest ID</label>
+              <input type="number"
+                id="sendQuestId" placeholder="Quest ID" onblur="getValueSendQuest2()"/>
+            </div>
+            <button onclick="sendQuest()">Send to Quest</button>
+          </div>
+
+          <div>
+            <h3>Complete Quest</h3>
+            <div>
+              <label for="returnQuestGooeyId">Your Gooey ID</label>
+              <input type="number"
+                id="returnQuestGooeyId" placeholder="Gooey ID" onblur="getValueCompleteQuest()"/>
+            </div>
+            <button onclick="completeQuest()">Complete Quest</button>
+          </div>
+
+          <div>
+            <h3>Cancel Quest</h3>
+            <div>
+              <label for="cancelQuestGooeyId">Your Gooey ID</label>
+              <input type="number"
+                id="cancelQuestGooeyId" placeholder="Gooey ID" onblur="getValueCancelQuest()"/>
+            </div>
+            <button onclick="cancelQuest()">Cancel Quest</button>
+          </div>
+
+        </div>
+
+      </div>
+    </section> -->
+
+    <section id="Fruits"> 
+
+      <div class="Fruits-Container">
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/apple.png" alt="Apple">
+            <h3>Apple</h3>
+            <p>7 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 0</p>
+            <p>Tumble Stat Bonus: 0%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>3,000 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="0" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-0">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/orange.png" alt="Orange">
+            <h3>Orange</h3>
+            <p>10 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 0</p>
+            <p>Tumble Stat Bonus: 0%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>4,000 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="1" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-1">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/banana.jpg" alt="Banana">
+            <h3>Banana</h3>
+            <p>12 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 0</p>
+            <p>Tumble Stat Bonus: 0%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>4,800 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="2" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-2">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/strawberry.jpg" alt="Strawberry">
+            <h3>Strawberry</h3>
+            <p>20 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 0</p>
+            <p>Tumble Stat Bonus: 0%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>7,300 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="3" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-3">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/cherry.jpg" alt="Cherry">
+            <h3>Cherry</h3>
+            <p>27 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 0</p>
+            <p>Tumble Stat Bonus: 1%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>10,000 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="4" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-4">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/pineapple.jpg" alt="Pineapple">
+            <h3>Pineapple</h3>
+            <p>55 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 1</p>
+            <p>Tumble Stat Bonus: 2%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>20,000 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="5" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-5">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/coconut.jpg" alt="Coconut">
+            <h3>Coconut</h3>
+            <p>75 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 2</p>
+            <p>Tumble Stat Bonus: 2%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>27,500 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="6" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-6">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/foxtail.jpg" alt="Foxtail Fruit">
+            <h3>Foxtail Fruit</h3>
+            <p>125 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 4</p>
+            <p>Tumble Stat Bonus: 5%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>45,000 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="7" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-7">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/pancake.jpg" alt="Pancake Squash">
+            <h3>Pancake Squash</h3>
+            <p>155 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 5</p>
+            <p>Tumble Stat Bonus: 10%</p>
+            <p>Extra Tumbles: 0</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>54,000 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="8" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-8">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/devil.jpg" alt="Devil's Pomegranate">
+            <h3>Devil's Pomegranate</h3>
+            <p>220 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 50</p>
+            <p>Tumble Stat Bonus: 18%</p>
+            <p>Extra Tumbles: 1</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>800,000 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="9" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-9">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+        <div class="Fruit">
+          <div>
+            <img src="https://gooey-companion.vercel.app/moondrop.jpg" alt="Moondrop Fruit">
+            <h3>Moondrop Fruit</h3>
+            <p>330 Hours</p>
+          </div>
+          <div>
+            <p>Nexus Bonus: 100</p>
+            <p>Tumble Stat Bonus: 20%</p>
+            <p>Extra Tumbles: 2</p>
+          </div>
+          <div>
+            <p>Price: </p>
+            <p>1,550,000 $GOO</p>
+          </div>
+          <div>
+            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
+            <button id="10" onclick="showModal4(); getFruitIdToConsume(this)">Eat</button>
+            <!-- <div>
+              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            </div> -->
+          </div>
+          <div class="fruit-amount" id="fruit-amount-10">
+            <p>Current Amount</p>
+          </div>
+        </div>
+
+      </div>
+        
+      <!-- <div id="modal-container3" class="modal3">
+        <div class="modal-content3">
+          <span onclick="modal3.style.display='none'" class="close3">&times;</span>
+
+          <div class="">
+            
+            <div>
+              <h4>Fruits</h4>
+              <div>
+                <input id="" type="number">
+                <button id="5" onclick="getQuestId(this)" onclick="modal3.style.display='none'">Send to Quest</button>
+              </div>
+            </div>
+            
+          </div>
+
+        </div>
+      </div> -->
+
+      <div id="modal-container4" class="modal4">
+        <div class="modal-content4">
+          <span onclick="modal4.style.display='none'" class="close4">&times;</span>
+
+          <div>
+            
+            <div>
+              <h4>Enter ID and Amount</h4>
+              <div>
+                <p>Gooey ID to eat the fruit</p>
+                <input id="eat-fruit-id" type="number" placeholder="Gooey ID">
+                <p>Amount of fruits to eat</p>
+                <input id="eat-fruit-amount" type="number" placeholder="Fruit Amount">
+                <button onclick="getFruitValues(); modal4.style.display='none'">Confirm</button>
+              </div>
+            </div>
+            
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- <div id="modal-container5" class="modal5">
+        <div class="modal-content5">
+          <span onclick="modal5.style.display='none'" class="close5">&times;</span>
+
+          <div>
+            
+            <div>
+              <h4>Receiving Wallet</h4>
+              <div>
+                <input id="fruit-receiver" type="string" placeholder="Wallet Address">
+                <button onclick="transferFruitConfirm()" onclick="modal5.style.display='none'">Transfer Fruit</button>
+              </div>
+            </div>
+            
+          </div>
+
+        </div>
+      </div> -->
+
+
+    </section>
+
+    <!-- <section style="display: flex; justify-content: center;">
+      <div style="text-align: center;">
+        <h1>Check function</h1>
+        <button onclick="check()">Check</button>
+      </div>
+    </section> -->
+  
+    <script>
+
+      // https://gooeys.dogira.finance/1
+
+      const fruitsContract = "0x2375874eb409095efa6090bf7085ae3922543c72" 
+      const fruitsABI = [{"anonymous": false,"inputs": [{"indexed": true,"internalType": "address","name": "previousOwner","type": "address"},{"indexed": true,"internalType": "address","name": "newOwner","type": "address"}],"name": "OwnershipTransferred","type": "event"},{"inputs": [{"internalType": "address","name": "_dToken","type": "address"},{"internalType": "address","name": "_gToken","type": "address"},{"internalType": "address","name": "_gFruit","type": "address"},{"internalType": "address","name": "_gCore","type": "address"}],"name": "loadExterns","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [],"name": "renounceOwnership","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "newOwner","type": "address"}],"name": "transferOwnership","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "_dToken","type": "address"},{"internalType": "address","name": "_gToken","type": "address"},{"internalType": "address","name": "_gFruit","type": "address"},{"internalType": "address","name": "_gCore","type": "address"}],"stateMutability": "nonpayable","type": "constructor"},{"inputs": [{"internalType": "address","name": "owner","type": "address"},{"internalType": "uint256","name": "baseGooeyId","type": "uint256"}],"name": "getTumblingFeesForGooeys","outputs": [{"internalType": "uint256[][]","name": "gooeyFees","type": "uint256[][]"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "owner","type": "address"}],"name": "loadAllGooeysForPlayer","outputs": [{"internalType": "uint256[][]","name": "gooeyStats","type": "uint256[][]"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "owner","type": "address"},{"internalType": "uint256","name": "maxFruitID","type": "uint256"}],"name": "loadFruitByOwner","outputs": [{"internalType": "uint256[]","name": "ownerFruitAmts","type": "uint256[]"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "loadGlobalSettings","outputs": [{"internalType": "uint256[]","name": "settings","type": "uint256[]"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256[]","name": "ids","type": "uint256[]"}],"name": "loadGooeyStats","outputs": [{"internalType": "uint256[][]","name": "gooeyStats","type": "uint256[][]"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "owner","type": "address"},{"internalType": "uint256","name": "maxFruitID","type": "uint256"}],"name": "loadTokenAndFruitInfo","outputs": [{"internalType": "uint256[][]","name": "tokenAndFruitAmts","type": "uint256[][]"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "owner","type": "address"}],"name": "loadTokenInfo","outputs": [{"internalType": "uint256[]","name": "tokenAmts","type": "uint256[]"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "owner","outputs": [{"internalType": "address","name": "","type": "address"}],"stateMutability": "view","type": "function"}]
+
+      // const fruitsContract2 = "0x5bDEc91CB5994D176b6Ca8d7412dDAD0B99aF20a"
+      const fruitsContract2 = "0x6F3Cc27E17a0f2e52D8e7693FF0d892Cea1854bF"
+      const fruitsABI2 = [{"anonymous": false,"inputs": [{"indexed": true,"internalType": "address","name": "owner","type": "address"},{"indexed": true,"internalType": "address","name": "spender","type": "address"},{"indexed": false,"internalType": "uint256","name": "value","type": "uint256"}],"name": "Approval","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "address","name": "_addr","type": "address"},{"indexed": false,"internalType": "bool","name": "_set","type": "bool"},{"indexed": false,"internalType": "uint256","name": "_block","type": "uint256"}],"name": "GameControllerSet","type": "event"},{"anonymous": false,"inputs": [{"indexed": true,"internalType": "address","name": "previousOwner","type": "address"},{"indexed": true,"internalType": "address","name": "newOwner","type": "address"}],"name": "OwnershipTransferred","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "address","name": "_addr","type": "address"},{"indexed": false,"internalType": "bool","name": "_set","type": "bool"},{"indexed": false,"internalType": "uint256","name": "_block","type": "uint256"}],"name": "SupplyExemptWalletSet","type": "event"},{"anonymous": false,"inputs": [{"indexed": true,"internalType": "address","name": "from","type": "address"},{"indexed": true,"internalType": "address","name": "to","type": "address"},{"indexed": false,"internalType": "uint256","name": "value","type": "uint256"}],"name": "Transfer","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "address","name": "_treasury","type": "address"}],"name": "TreasuryUpdated","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "bool","name": "_status","type": "bool"},{"indexed": false,"internalType": "uint256","name": "_block","type": "uint256"}],"name": "WalletSupplyLimitsSet","type": "event"},{"inputs": [{"internalType": "address","name": "spender","type": "address"},{"internalType": "uint256","name": "amount","type": "uint256"}],"name": "approve","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "spender","type": "address"},{"internalType": "uint256","name": "subtractedValue","type": "uint256"}],"name": "decreaseAllowance","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "spender","type": "address"},{"internalType": "uint256","name": "addedValue","type": "uint256"}],"name": "increaseAllowance","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "to","type": "address"},{"internalType": "uint256","name": "amount","type": "uint256"}],"name": "mint","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [],"name": "renounceOwnership","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "_addr","type": "address"},{"internalType": "bool","name": "_set","type": "bool"}],"name": "setGameController","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "_addr","type": "address"},{"internalType": "bool","name": "_set","type": "bool"}],"name": "setSupplyLimitExemption","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "bool","name": "_set","type": "bool"}],"name": "setWalletSupplyLimits","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "to","type": "address"},{"internalType": "uint256","name": "amount","type": "uint256"}],"name": "transfer","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "from","type": "address"},{"internalType": "address","name": "to","type": "address"},{"internalType": "uint256","name": "amount","type": "uint256"}],"name": "transferFrom","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "newOwner","type": "address"}],"name": "transferOwnership","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "_treasury","type": "address"}],"name": "updateTreasury","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "_treasury","type": "address"}],"stateMutability": "nonpayable","type": "constructor"},{"inputs": [{"internalType": "address","name": "owner","type": "address"},{"internalType": "address","name": "spender","type": "address"}],"name": "allowance","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "account","type": "address"}],"name": "balanceOf","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "chefCutThreshold","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "decimals","outputs": [{"internalType": "uint8","name": "","type": "uint8"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "deploymentBlock","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "getDivisionRate","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "_addr","type": "address"}],"name": "isWalletSupplyExempt","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "maxSupplyPerWallet","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "mintedWithoutChefCut","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "name","outputs": [{"internalType": "string","name": "","type": "string"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "owner","outputs": [{"internalType": "address","name": "","type": "address"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "symbol","outputs": [{"internalType": "string","name": "","type": "string"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "totalSupply","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "treasury","outputs": [{"internalType": "address","name": "","type": "address"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "TWO_MONTHS_BLOCKS","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "walletSupplyLimitsEnabled","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "view","type": "function"}]
+     
+      const gooeyABI = [{"inputs": [{"internalType": "string","name": "_name","type": "string"},{"internalType": "string","name": "_symbol","type": "string"},{"internalType": "string","name": "_initBaseURI","type": "string"},{"internalType": "address","name": "_gooeysOld","type": "address"},{"internalType": "bytes32","name": "_keyHash","type": "bytes32"}],"stateMutability": "nonpayable","type": "constructor"},{"anonymous": false,"inputs": [{"indexed": true,"internalType": "address","name": "owner","type": "address"},{"indexed": true,"internalType": "address","name": "approved","type": "address"},{"indexed": true,"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "Approval","type": "event"},{"anonymous": false,"inputs": [{"indexed": true,"internalType": "address","name": "owner","type": "address"},{"indexed": true,"internalType": "address","name": "operator","type": "address"},{"indexed": false,"internalType": "bool","name": "approved","type": "bool"}],"name": "ApprovalForAll","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "uint256","name": "_gooeyId","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_fruitType","type": "uint256"}],"name": "EatFruit","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "uint256","name": "_mintAmount","type": "uint256"}],"name": "InHouseMintComplete","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "uint256","name": "_gooeyId","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "randomness","type": "uint256"}],"name": "NewMintAttributes","type": "event"},{"anonymous": false,"inputs": [{"indexed": true,"internalType": "address","name": "previousOwner","type": "address"},{"indexed": true,"internalType": "address","name": "newOwner","type": "address"}],"name": "OwnershipTransferred","type": "event"},{"anonymous": false,"inputs": [{"components": [{"internalType": "bool","name": "inProgress","type": "bool"},{"internalType": "uint256","name": "blockStarted","type": "uint256"},{"internalType": "uint256","name": "blockFinished","type": "uint256"},{"internalType": "uint256","name": "status","type": "uint256"},{"internalType": "uint256","name": "statRolled","type": "uint256"},{"internalType": "uint256","name": "gooReward","type": "uint256"},{"internalType": "uint256","name": "fruitsRewarded","type": "uint256"},{"components": [{"internalType": "uint256","name": "questId","type": "uint256"},{"internalType": "uint256","name": "blockLength","type": "uint256"},{"internalType": "uint256[2]","name": "minMaxGoo","type": "uint256[2]"},{"internalType": "uint256[2]","name": "minMaxFoodRolls","type": "uint256[2]"},{"internalType": "uint256[2]","name": "minMaxFoodRange","type": "uint256[2]"},{"internalType": "uint256","name": "minRollForSuccess","type": "uint256"}],"internalType": "struct Gooeys.questSchema","name": "quest","type": "tuple"}],"indexed": false,"internalType": "struct Gooeys.quest","name": "_quest","type": "tuple"},{"indexed": false,"internalType": "uint256","name": "randomness","type": "uint256"}],"name": "QuestComplete","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "uint256","name": "_gooeyId","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_foodStore","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_bond","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_tumbles","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_tumblebonus","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_hp","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_atk","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_def","type": "uint256"},{"indexed": false,"internalType": "uint256","name": "_spd","type": "uint256"}],"name": "StatUpdate","type": "event"},{"anonymous": false,"inputs": [{"indexed": true,"internalType": "address","name": "from","type": "address"},{"indexed": true,"internalType": "address","name": "to","type": "address"},{"indexed": true,"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "Transfer","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "bytes32","name": "_requestId","type": "bytes32"},{"indexed": false,"internalType": "uint256","name": "_vrfResult","type": "uint256"}],"name": "VRFCallback","type": "event"},{"anonymous": false,"inputs": [{"indexed": false,"internalType": "address","name": "_tokenAddr","type": "address"},{"indexed": false,"internalType": "address","name": "_foodAddr","type": "address"},{"indexed": false,"internalType": "address","name": "_dToken","type": "address"}],"name": "externalTokensLoaded","type": "event"},{"inputs": [{"internalType": "address","name": "to","type": "address"},{"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "approve","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "owner","type": "address"}],"name": "balanceOf","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "baseURI","outputs": [{"internalType": "string","name": "","type": "string"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "_gooeyId","type": "uint256"}],"name": "cancelQuest","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "checkIn","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_gooeyId","type": "uint256"}],"name": "completeQuest","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_gooeyId","type": "uint256"},{"internalType": "uint256","name": "_amt","type": "uint256"},{"internalType": "uint256","name": "_foodId","type": "uint256"}],"name": "consumeFruit","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_startId","type": "uint256"},{"internalType": "uint256","name": "_endId","type": "uint256"}],"name": "convertOldGooeyCollection","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [],"name": "dDiscountActive","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "dDiscountMultiplier","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "dDiscountQualifier","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "gameStartBlock","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "getApproved","outputs": [{"internalType": "address","name": "","type": "address"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "gooeyId","type": "uint256"}],"name": "getCurrentQuestInfoABIv1","outputs": [{"internalType": "uint256[8]","name": "","type": "uint256[8]"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "questTypeId","type": "uint256"}],"name": "getQuestTypeInfoABIv1","outputs": [{"internalType": "uint256[8]","name": "","type": "uint256[8]"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "getStatsABIv1","outputs": [{"internalType": "uint256[17]","name": "","type": "uint256[17]"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "gooey","type": "uint256"}],"name": "getTumbleAvailabilityBlock","outputs": [{"internalType": "uint256","name": "tumbleBlock","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "gooey1","type": "uint256"},{"internalType": "uint256","name": "gooey2","type": "uint256"}],"name": "getTumbleCost","outputs": [{"internalType": "uint256","name": "cost","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "gooTumbleWaitBlocks","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "","type": "uint256"}],"name": "gooeyAttributes","outputs": [{"components": [{"internalType": "uint256","name": "hp","type": "uint256"},{"internalType": "uint256","name": "atk","type": "uint256"},{"internalType": "uint256","name": "def","type": "uint256"},{"internalType": "uint256","name": "spd","type": "uint256"},{"internalType": "uint256","name": "originalHp","type": "uint256"},{"internalType": "uint256","name": "originalAtk","type": "uint256"},{"internalType": "uint256","name": "originalDef","type": "uint256"},{"internalType": "uint256","name": "originalSpd","type": "uint256"}],"internalType": "struct Gooeys.statInfo","name": "stats","type": "tuple"},{"components": [{"internalType": "uint256","name": "birthBlock","type": "uint256"},{"internalType": "uint256","name": "generation","type": "uint256"},{"internalType": "uint256","name": "tumblesRemaining","type": "uint256"},{"internalType": "uint256","name": "lastTumbleBlock","type": "uint256"},{"internalType": "uint256","name": "bond","type": "uint256"},{"internalType": "uint256","name": "foodStore","type": "uint256"},{"internalType": "uint256","name": "tumbleRollBonus","type": "uint256"},{"internalType": "uint256","name": "totalTumbles","type": "uint256"},{"internalType": "int256[2]","name": "parents","type": "int256[2]"}],"internalType": "struct Gooeys.lifeInfo","name": "life","type": "tuple"},{"components": [{"internalType": "string","name": "name","type": "string"},{"internalType": "uint256","name": "background","type": "uint256"},{"internalType": "uint256","name": "ears","type": "uint256"},{"internalType": "uint256","name": "body","type": "uint256"},{"internalType": "uint256","name": "mask","type": "uint256"},{"internalType": "uint256","name": "eyes","type": "uint256"},{"internalType": "uint256","name": "accessory","type": "uint256"}],"internalType": "struct Gooeys.cosmeticInfo","name": "cosmetics","type": "tuple"},{"internalType": "uint256","name": "lastUpdateBlock","type": "uint256"},{"internalType": "uint256","name": "tokenId","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "owner","type": "address"},{"internalType": "address","name": "operator","type": "address"}],"name": "isApprovedForAll","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "_dToken","type": "address"},{"internalType": "address","name": "_tokenAddr","type": "address"},{"internalType": "address","name": "_foodAddr","type": "address"}],"name": "loadExterns","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_questId","type": "uint256"},{"internalType": "uint256","name": "_hours","type": "uint256"},{"internalType": "uint256","name": "_minGoo","type": "uint256"},{"internalType": "uint256","name": "_maxGoo","type": "uint256"},{"internalType": "uint256","name": "_minFoodRoll","type": "uint256"},{"internalType": "uint256","name": "_maxFoodRoll","type": "uint256"},{"internalType": "uint256","name": "_minFoodRange","type": "uint256"},{"internalType": "uint256","name": "_maxFoodRange","type": "uint256"},{"internalType": "uint256","name": "_minRollForSuccess","type": "uint256"}],"name": "loadQuest","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [],"name": "maximumCallGwei","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "mint","outputs": [],"stateMutability": "payable","type": "function"},{"inputs": [],"name": "name","outputs": [{"internalType": "string","name": "","type": "string"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "owner","outputs": [{"internalType": "address","name": "","type": "address"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "ownerOf","outputs": [{"internalType": "address","name": "","type": "address"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "bytes32","name": "requestId","type": "bytes32"},{"internalType": "uint256","name": "randomness","type": "uint256"}],"name": "rawFulfillRandomness","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [],"name": "renounceOwnership","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "from","type": "address"},{"internalType": "address","name": "to","type": "address"},{"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "safeTransferFrom","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "from","type": "address"},{"internalType": "address","name": "to","type": "address"},{"internalType": "uint256","name": "tokenId","type": "uint256"},{"internalType": "bytes","name": "_data","type": "bytes"}],"name": "safeTransferFrom","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "operator","type": "address"},{"internalType": "bool","name": "approved","type": "bool"}],"name": "setApprovalForAll","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_maximumCallGwei","type": "uint256"},{"internalType": "bool","name": "_gweiCheckEnabled","type": "bool"},{"internalType": "bool","name": "_contractCheckEnabled","type": "bool"}],"name": "setContractGweiChecks","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_dDiscountQualifier","type": "uint256"},{"internalType": "uint256","name": "_dDiscountMultiplier","type": "uint256"},{"internalType": "bool","name": "_dDiscountActive","type": "bool"}],"name": "setDTokenDiscounts","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "_addr","type": "address"},{"internalType": "bool","name": "_set","type": "bool"}],"name": "setGameController","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "bool","name": "_gameStatus","type": "bool"}],"name": "setGameStatus","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "bool","name": "_set","type": "bool"}],"name": "setTumbleEnabled","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_tumbleBaseFee","type": "uint256"},{"internalType": "uint256","name": "_tumbleScalingFee","type": "uint256"},{"internalType": "uint256","name": "_tumblePunitiveMultiplier","type": "uint256"},{"internalType": "uint256","name": "_tumblePunitiveMultiplierThreshold","type": "uint256"}],"name": "setTumbleFees","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "string","name": "_newBaseURI","type": "string"}],"name": "setURI","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_gooeyId","type": "uint256"},{"internalType": "uint256","name": "_questType","type": "uint256"}],"name": "startQuest","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "bytes4","name": "interfaceId","type": "bytes4"}],"name": "supportsInterface","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "symbol","outputs": [{"internalType": "string","name": "","type": "string"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "index","type": "uint256"}],"name": "tokenByIndex","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "owner","type": "address"},{"internalType": "uint256","name": "index","type": "uint256"}],"name": "tokenOfOwnerByIndex","outputs": [{"internalType": "uint256","name": "tokenId","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "tokenURI","outputs": [{"internalType": "string","name": "","type": "string"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "owner","type": "address"}],"name": "tokensOfOwner","outputs": [{"internalType": "uint256[]","name": "","type": "uint256[]"}],"stateMutability": "view","type": "function"},{"inputs": [],"name": "totalSupply","outputs": [{"internalType": "uint256","name": "","type": "uint256"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "address","name": "from","type": "address"},{"internalType": "address","name": "to","type": "address"},{"internalType": "uint256","name": "tokenId","type": "uint256"}],"name": "transferFrom","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address","name": "newOwner","type": "address"}],"name": "transferOwnership","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "gooey1","type": "uint256"},{"internalType": "uint256","name": "gooey2","type": "uint256"}],"name": "tumble","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [],"name": "tumbleEnabled","outputs": [{"internalType": "bool","name": "","type": "bool"}],"stateMutability": "view","type": "function"},{"inputs": [{"internalType": "uint256","name": "_gooTumbleWaitBlocks","type": "uint256"}],"name": "updateGooTumbleWaitBlocks","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_gooeyId","type": "uint256"},{"internalType": "uint256","name": "_foodStore","type": "uint256"},{"internalType": "uint256","name": "_bond","type": "uint256"},{"internalType": "uint256","name": "_tumbles","type": "uint256"},{"internalType": "uint256","name": "_tumblebonus","type": "uint256"},{"internalType": "uint256","name": "_hp","type": "uint256"},{"internalType": "uint256","name": "_atk","type": "uint256"},{"internalType": "uint256","name": "_def","type": "uint256"},{"internalType": "uint256","name": "_spd","type": "uint256"}],"name": "updateGooey","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "uint256","name": "_maxNexus","type": "uint256"}],"name": "updateMaxNexus","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [{"internalType": "address[]","name": "_addresses","type": "address[]"},{"internalType": "bool","name": "_set","type": "bool"}],"name": "whitelistSet","outputs": [],"stateMutability": "nonpayable","type": "function"},{"inputs": [],"name": "withdraw","outputs": [],"stateMutability": "payable","type": "function"}]
+
+
+
+
+      
+      let modal = document.getElementById("modal-container")
+      let modal2 = document.getElementById("modal-container2")
+      let modal3 = document.getElementById("modal-container3")
+      let modal4 = document.getElementById("modal-container4")
+      let modal5 = document.getElementById("modal-container5")
+
+
+
+
+
+      let checkIds = []
+
+      let allStats = []
+
+      let userGooeys = []
+      let gooeyStats = []
+      let gooeyLife = []
+      let gooeyId = []
+      let tokens = []
+      let fruits = []
+      let lastUpdateBlock = []
+      let latestBlock
+      let questTime = []
+ 
+      let gooeyContainer = document.getElementById("Gooey-Container")
+
+
+      // async function getGooeyData() {
+      //   const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+      //   const contract = new window.web3.eth.Contract(ABI, CONTRACT_ADDRESS);
+
+      //   for (let i in userGooeys) {
+      //         if (userGooeys.hasOwnProperty(i)) {
+      //             value = userGooeys[i];
+      //             // console.log(i, value);
+
+      //             for (const x of value) {
+      //               const uri = await contract.methods.gooeyAttributes(x).call({ from: window.userAddress })
+      //               gooeyStats.push(uri);
+      //             }
+      //         }
+      //   }
+
+      //   console.log(gooeyStats)
+      // }
+
+      async function getUserTokenIDs() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+        const contract2 = new window.web3.eth.Contract(fruitsABI, fruitsContract);
+        // 0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA
+        // 0x970006c8EC4f30905BEe133bf2018413066c26Fe
+        const ids = await contract.methods.tokensOfOwner(window.userAddress).call({ from: window.userAddress })
+        // const tumbleFees = await contract2.methods.getTumblingFeesForGooeys("0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA", 94).call({ from: window.userAddress });
+        const tokensAndFruits = await contract2.methods.loadTokenAndFruitInfo(window.userAddress, 14).call({ from: window.userAddress });
+        latestBlock = await web3.eth.getBlockNumber()
+
+        tokens.push(tokensAndFruits[0])
+        fruits.push(tokensAndFruits[1])
+
+        let dg = tokens[0][2]
+        dg = parseInt(dg)
+        if (dg > 0 ) {
+          dg = dg.toString().substr(0, dg.toString().length - 9);
+          dg = dg.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        }
+
+        let goo = tokens[0][1]
+        goo = parseInt(goo)
+        if (goo > 0 ) {
+          goo = goo.toString().substr(0, goo.toString().length - 9);
+          goo = goo.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        }
+
+        let pDg = document.createElement("p");
+        let nodeDg = document.createTextNode(dg);
+        pDg.appendChild(nodeDg);
+        document.getElementById("Dogira").appendChild(pDg);
+
+        let pGoo = document.createElement("p");
+        let nodeGoo = document.createTextNode(goo);
+        pGoo.appendChild(nodeGoo);
+        document.getElementById("GOO").appendChild(pGoo);
+
+        userGooeys.push(ids)
+
+        checkIds.push(ids)
+        // console.log(userGooeys)
+
+        if (checkIds.length != 0) {
+
+          let noGooeys = document.getElementById("No-Gooeys");
+          noGooeys.classList.add("hidden");
+
+          for (let i in userGooeys) {
+              if (userGooeys.hasOwnProperty(i)) {
+                  value = userGooeys[i];
+                  // console.log(i, value);
+
+                  for (const x of value) {
+
+                    const data = await contract.methods.gooeyAttributes(x).call({ from: window.userAddress });
+                    const questData = await contract.methods.getCurrentQuestInfoABIv1(x).call({ from: window.userAddress });
+
+                    // console.log(data)
+                    allStats.push(data)
+                    gooeyStats.push(data.stats);
+                    gooeyLife.push(data.life);
+                    gooeyId.push(data.tokenId);
+                    lastUpdateBlock.push(data.lastUpdateBlock)
+                    questTime.push(questData[2])
+                    // console.log(questTime)
+
+                    let div = document.createElement("div");
+                    div.className = "Gooey";
+                    let img = document.createElement("img");
+                    img.src = "https://gooeys.dogira.finance/"+x+".jpg";
+                    img.alt = x;
+                    div.appendChild(img);
+                    gooeyContainer.appendChild(div);
+                  }
+                  for (let i in gooeyStats) {
+
+////////////////// Create and insert Div with Gooey ID ///////////////////////////////////////////////////////////////
+
+                    let divMain = document.createElement("div")
+                    let pMain = document.createElement("p");
+                    let nodeMain = document.createTextNode("Gooey ID: ");
+                    let spanMain = document.createElement("span");
+                    let spanMainValue = document.createTextNode("#" + gooeyId[i])
+                    pMain.appendChild(nodeMain);
+                    spanMain.appendChild(spanMainValue);
+                    pMain.appendChild(spanMain);
+                    divMain.appendChild(pMain);
+                    document.getElementsByClassName("Gooey")[i].appendChild(divMain);
+
+////////////////// Create and insert Div with Gooey ID END ///////////////////////////////////////////////////////////
+//
+////////////////// Create and insert Div with HP, ATK, DEF, SPD and TOTAL stats //////////////////////////////////////
+
+                    let div = document.createElement("div");
+
+                    let p = document.createElement("p");
+                    let node = document.createTextNode("Health: ");
+                    let spanHp = document.createElement("span");
+                    let spanHpValue = document.createTextNode(gooeyStats[i].hp);
+
+                    let p2 = document.createElement("p");
+                    let node2 = document.createTextNode("Attack: ");
+                    let spanAtk = document.createElement("span");
+                    let spanAtkValue = document.createTextNode(gooeyStats[i].atk);
+
+                    let p3 = document.createElement("p");
+                    let node3 = document.createTextNode("Defense: ");
+                    let spanDef = document.createElement("span");
+                    let spanDefValue = document.createTextNode(gooeyStats[i].def);
+
+                    let p4 = document.createElement("p");
+                    let node4 = document.createTextNode("Speed: ");
+                    let spanSpd = document.createElement("span");
+                    let spanSpdValue = document.createTextNode(gooeyStats[i].spd);
+
+                    let p5 = document.createElement("p");
+                    let span = document.createElement("span");
+                    span.id = "total"
+                    span.setAttribute("function", "getSendQuestId(this)");
+                    let total = parseInt(gooeyStats[i].hp) + parseInt(gooeyStats[i].atk) + parseInt(gooeyStats[i].def) + parseInt(gooeyStats[i].spd);
+                    let node5 = document.createTextNode("Total Strength: ");
+                    let spanNode = document.createTextNode(total);
+                    p.appendChild(node);
+                    spanHp.appendChild(spanHpValue);
+                    p.appendChild(spanHp);
+
+                    p2.appendChild(node2);
+                    spanAtk.appendChild(spanAtkValue);
+                    p2.appendChild(spanAtk);
+
+                    p3.appendChild(node3);
+                    spanDef.appendChild(spanDefValue);
+                    p3.appendChild(spanDef);
+
+                    p4.appendChild(node4);
+                    spanSpd.appendChild(spanSpdValue);
+                    p4.appendChild(spanSpd);
+
+                    p5.appendChild(node5);
+                    span.appendChild(spanNode);
+                    p5.appendChild(span);
+                    div.appendChild(p);
+                    div.appendChild(p2);
+                    div.appendChild(p3);
+                    div.appendChild(p4);
+                    div.appendChild(p5);
+                    document.getElementsByClassName("Gooey")[i].appendChild(div);
+
+////////////////// Create and insert Div with HP, ATK, DEF, SPD and TOTAL stats END //////////////////////////////////
+//
+////////////////// Create and insert Div with Gooey Life stats //////////////////////////////////////////////////////
+
+                    let div2 = document.createElement("div");
+
+                    let pNexus = document.createElement("p");
+                    let nodeNexus = document.createTextNode("Nexus: ");
+                    let spanNexus = document.createElement("span");
+                    let nodeNexusValue = document.createTextNode(gooeyLife[i].bond);
+
+                    let pGen = document.createElement("p");
+                    let nodeGen = document.createTextNode("Gen: ");
+                    let spanGen = document.createElement("span");
+                    let genNodeValue = document.createTextNode(gooeyLife[i].generation);
+
+                    let pTumbleBonus = document.createElement("p");
+                    let nodeTumbleBonus = document.createTextNode("Tumble Bonus: ");
+                    let spanTumbleBonus = document.createElement("span");
+                    let nodeTumbleBonusValue = document.createTextNode(gooeyLife[i].tumbleRollBonus + "%");
+
+                    let pTumblesRemaining = document.createElement("p");
+                    let nodeTumblesRemaining = document.createTextNode("Tumbles Left: ");
+                    let spanTumblesRemaining = document.createElement("span");
+                    let nodeTumblesRemainingValue = document.createTextNode(gooeyLife[i].tumblesRemaining);
+
+                    let pTotalTumbles = document.createElement("p");
+                    let nodeTotalTumbles = document.createTextNode("Total Tumbles: ");
+                    let spanTotalTumbles = document.createElement("span");
+                    let nodeTotalTumblesValue = document.createTextNode(gooeyLife[i].totalTumbles);
+
+                    pNexus.appendChild(nodeNexus);
+                    spanNexus.appendChild(nodeNexusValue);
+                    pNexus.appendChild(spanNexus);
+
+                    pGen.appendChild(nodeGen);
+                    spanGen.appendChild(genNodeValue);
+                    pGen.appendChild(spanGen);
+
+                    pTumbleBonus.appendChild(nodeTumbleBonus);
+                    spanTumbleBonus.appendChild(nodeTumbleBonusValue)
+                    pTumbleBonus.appendChild(spanTumbleBonus)
+
+                    pTumblesRemaining.appendChild(nodeTumblesRemaining);
+                    spanTumblesRemaining.appendChild(nodeTumblesRemainingValue)
+                    pTumblesRemaining.appendChild(spanTumblesRemaining)
+
+                    pTotalTumbles.appendChild(nodeTotalTumbles);
+                    spanTotalTumbles.appendChild(nodeTotalTumblesValue)
+                    pTotalTumbles.appendChild(spanTotalTumbles)
+
+                    div2.appendChild(pGen);
+                    div2.appendChild(pTumbleBonus);
+                    div2.appendChild(pTotalTumbles);
+                    div2.appendChild(pTumblesRemaining);
+                    div2.appendChild(pNexus);
+                    document.getElementsByClassName("Gooey")[i].appendChild(div2);
+
+////////////////// Create and insert Div with Gooey Life stats END //////////////////////////////////////////////////////
+//
+////////////////// Create and insert Div with Gooey Fruit Store /////////////////////////////////////////////////////////
+
+                    let divFoodStore = document.createElement("div");
+                    // console.log(gooeyLife[i][5]);
+                      // let seconds = 3347
+                      // let seconds = gooeyLife[i][5] * 2 + (gooeyLife[i][5] * 2 /100 * 10);
+                      let seconds = (parseInt(gooeyLife[i][5]) - (parseInt(latestBlock) - parseInt(lastUpdateBlock[i]))) * 2
+                      if (seconds < 0) { 
+                        seconds = 0
+                      }
+                      // let seconds = latestBlock
+                      let d = Math.floor(seconds / (3600 * 24));
+                      let h = Math.floor(seconds % (3600 * 24) / 3600);
+                      let m = Math.floor(seconds % 3600 / 60);
+                      let s = Math.floor(seconds % 60);
+                      let dDisplay = d + (d > 1 || d == 0 ? " Days" : " Day");
+                      let hDisplay = h + (h > 1 || h == 0 ? " Hours" : " Hour");
+                      let mDisplay = m + (m > 1 || m == 0 ? " Minutes" : " Minute");
+                      let sDisplay = s + (s > 1 || s == 0 ? " Seconds" : " Second");
+                    let nodeFoodStore1 = document.createTextNode("Food Store: ");
+                    let pFoodStore1 = document.createElement("p");
+                    let nodeFoodStore2 = document.createTextNode(dDisplay);
+                    let pFoodStore2 = document.createElement("p");
+                    let nodeFoodStore3 = document.createTextNode(hDisplay);
+                    let pFoodStore3 = document.createElement("p");
+                    let nodeFoodStore4 = document.createTextNode(mDisplay);
+                    let pFoodStore4 = document.createElement("p");
+                    let nodeFoodStore5 = document.createTextNode(sDisplay);
+                    let pFoodStore5 = document.createElement("p");
+
+                    pFoodStore1.appendChild(nodeFoodStore1);
+                    pFoodStore2.appendChild(nodeFoodStore2);
+                    pFoodStore3.appendChild(nodeFoodStore3);
+                    pFoodStore4.appendChild(nodeFoodStore4);
+                    pFoodStore5.appendChild(nodeFoodStore5);
+                    divFoodStore.appendChild(pFoodStore1);
+                    divFoodStore.appendChild(pFoodStore2);
+                    divFoodStore.appendChild(pFoodStore3);
+                    divFoodStore.appendChild(pFoodStore4);
+                    divFoodStore.appendChild(pFoodStore5);
+
+                    // div2.appendChild(pFoodStore);
+                    document.getElementsByClassName("Gooey")[i].appendChild(divFoodStore);
+
+////////////////// Create and insert Div with Gooey Fruit Store END //////////////////////////////////////////////////////////
+//
+////////////////// Create and insert Div with Quest Time /////////////////////////////////////////////////////////////////////
+
+                    let divQuestTime = document.createElement("div");
+                    // console.log(gooeyLife[i][5]);
+                      // let seconds2 = gooeyLife[i][5] * 2 + (gooeyLife[i][5] * 2 /100 * 10); 
+                      // questTime = questTime[i] - latestBlock
+                      let seconds2 = (questTime[i] - latestBlock) * 2
+                      if (seconds2 < 0) { 
+                        seconds = 0
+                      }
+                      let d2 = Math.floor(seconds2 / (3600 * 24));
+                      let h2 = Math.floor(seconds2 % (3600 * 24) / 3600);
+                      let m2 = Math.floor(seconds2 % 3600 / 60);
+                      let s2 = Math.floor(seconds2 % 60);
+                      let dDisplay2 = d2 + (d2 > 1 || d2 == 0 ? " Days" : " Day");
+                      let hDisplay2 = h2 + (h2 > 1 || h2 == 0 ? " Hours" : " Hour");
+                      let mDisplay2 = m2 + (m2 > 1 || m2 == 0 ? " Minutes" : " Minute");
+                      let sDisplay2 = s2 + (s2 > 1 || s2 == 0 ? " Seconds" : " Second");
+
+                    let nodeQuestTime1 = document.createTextNode("Quest Time: ");
+                    let pQuestTime1 = document.createElement("p");
+
+                    let nodeQuestTime2 = document.createTextNode(dDisplay2);
+                    let pQuestTime2 = document.createElement("p");
+
+                    let nodeQuestTime3 = document.createTextNode(hDisplay2);
+                    let pQuestTime3 = document.createElement("p");
+
+                    let nodeQuestTime4 = document.createTextNode(mDisplay2);
+                    let pQuestTime4 = document.createElement("p");
+
+                    let nodeQuestTime5 = document.createTextNode(sDisplay2);
+                    let pQuestTime5 = document.createElement("p");
+
+                    pQuestTime1.appendChild(nodeQuestTime1);
+                    pQuestTime2.appendChild(nodeQuestTime2);
+                    pQuestTime3.appendChild(nodeQuestTime3);
+                    pQuestTime4.appendChild(nodeQuestTime4);
+                    pQuestTime5.appendChild(nodeQuestTime5);
+                    divQuestTime.appendChild(pQuestTime1);
+                    divQuestTime.appendChild(pQuestTime2);
+                    divQuestTime.appendChild(pQuestTime3);
+                    divQuestTime.appendChild(pQuestTime4);
+                    divQuestTime.appendChild(pQuestTime5);
+                    document.getElementsByClassName("Gooey")[i].appendChild(divQuestTime);
+
+////////////////// Create and insert Div with Quest Time END //////////////////////////////////////////////////////////////
+//
+////////////////// Create and insert Div with quest buttons //////////////////////////////////////////////////////////////
+
+                    let div3 = document.createElement("div");
+                    div3.className += "quest-button-area";
+                    let sendQuestButton = document.createElement("button");
+                    sendQuestButton.id = gooeyId[i];
+                    sendQuestButton.setAttribute("onclick", "showModal(); getSendQuestId(this)");
+                    let sendQuestNode = document.createTextNode("Send to Quest");
+                    sendQuestButton.appendChild(sendQuestNode);
+                    div3.appendChild(sendQuestButton);
+
+                    let completeQuestButton = document.createElement("button");
+                    completeQuestButton.id = gooeyId[i];
+                    completeQuestButton.setAttribute("onclick", "getCompleteQuestId(this)");
+                    let completeQuestNode = document.createTextNode("Complete Quest");
+                    completeQuestButton.appendChild(completeQuestNode);
+                    div3.appendChild(completeQuestButton);
+
+                    let cancelQuestButton = document.createElement("button");
+                    cancelQuestButton.id = gooeyId[i];
+                    cancelQuestButton.setAttribute("onclick", "getCancelQuestId(this)");
+                    let cancelQuestNode = document.createTextNode("Cancel Quest");
+                    cancelQuestButton.appendChild(cancelQuestNode);
+                    div3.appendChild(cancelQuestButton);
+                    document.getElementsByClassName("Gooey")[i].appendChild(div3);
+
+////////////////// Create and insert Div with quest buttons END ///////////////////////////////////////////////////////
+
+////////////////// Create and insert Div with quest buttons //////////////////////////////////////////////////////////////
+
+                    let div4 = document.createElement("div");
+                    div4.className += "transfer-button-container";
+                    let transferButton = document.createElement("button");
+                    transferButton.id = gooeyId[i];
+                    transferButton.setAttribute("onclick", "showModal2(); getTransferId(this)");
+                    let transferButtonNode = document.createTextNode("Transfer");
+                    transferButton.appendChild(transferButtonNode);
+                    div4.appendChild(transferButton);
+                    document.getElementsByClassName("Gooey")[i].appendChild(div4);
+
+////////////////// Create and insert Div with quest buttons END ///////////////////////////////////////////////////////
+//
+////////////////// Create and insert P with the fruit amounts //////////////////////////////////////////////////////////////
+
+////////////////// Create and insert P with the fruit amounts END ///////////////////////////////////////////////////////////
+                  }
+              }
+          }
+        }
+        let p0 = document.createElement("p");
+        let p0Node = document.createTextNode(fruits[0][0]);
+        p0.appendChild(p0Node);
+        document.getElementById("fruit-amount-0").appendChild(p0);
+
+        let p1 = document.createElement("p");
+        let p1Node = document.createTextNode(fruits[0][1]);
+        p1.appendChild(p1Node);
+        document.getElementById("fruit-amount-1").appendChild(p1);
+
+        let p2 = document.createElement("p");
+        let p2Node = document.createTextNode(fruits[0][2]);
+        p2.appendChild(p2Node);
+        document.getElementById("fruit-amount-2").appendChild(p2);
+
+        let p3 = document.createElement("p");
+        let p3Node = document.createTextNode(fruits[0][3]);
+        p3.appendChild(p3Node);
+        document.getElementById("fruit-amount-3").appendChild(p3);
+
+        let p4 = document.createElement("p");
+        let p4Node = document.createTextNode(fruits[0][4]);
+        p4.appendChild(p4Node);
+        document.getElementById("fruit-amount-4").appendChild(p4);
+
+        let p5 = document.createElement("p");
+        let p5Node = document.createTextNode(fruits[0][5]);
+        p5.appendChild(p5Node);
+        document.getElementById("fruit-amount-5").appendChild(p5);
+
+        let p6 = document.createElement("p");
+        let p6Node = document.createTextNode(fruits[0][6]);
+        p6.appendChild(p6Node);
+        document.getElementById("fruit-amount-6").appendChild(p6);
+
+        let p7 = document.createElement("p");
+        let p7Node = document.createTextNode(fruits[0][7]);
+        p7.appendChild(p7Node);
+        document.getElementById("fruit-amount-7").appendChild(p7);
+
+        let p8 = document.createElement("p");
+        let p8Node = document.createTextNode(fruits[0][8]);
+        p8.appendChild(p8Node);
+        document.getElementById("fruit-amount-8").appendChild(p8);
+
+        let p9 = document.createElement("p");
+        let p9Node = document.createTextNode(fruits[0][9]);
+        p9.appendChild(p9Node);
+        document.getElementById("fruit-amount-9").appendChild(p9);
+
+        let p10 = document.createElement("p");
+        let p10Node = document.createTextNode(fruits[0][10]);
+        p10.appendChild(p10Node);
+        document.getElementById("fruit-amount-10").appendChild(p10);
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+      window.userAddress = null;
+
+      window.onload = async () => {
+        // Init Web3 connected to ETH network
+        if (window.ethereum) {
+          window.web3 = new Web3(window.ethereum);
+        } else {
+          alert("No ETH brower extension detected.");
+        }
+  
+        // Load in Localstore key
+        window.userAddress = window.localStorage.getItem("userAddress");
+        showAddress();
+        //getURI()
+        getUserTokenIDs()
+      };
+  
+      // Use this function to turn a 42 character ETH address
+      // into an address like 0x345...12345
+      function truncateAddress(address) {
+        if (!address) {
+          return "";
+        }
+        return `${address.substr(0, 5)}...${address.substr(
+          address.length - 5,
+          address.length
+        )}`;
+      }
+  
+      // Display or remove the users know address on the frontend
+      function showAddress() {
+        if (!window.userAddress) {
+          document.getElementById("userAddress").innerText = "";
+          document.getElementById("logoutButton").classList.add("hidden");
+          document.getElementById("loginButton").classList.remove("hidden");
+          return false;
+        }
+  
+        document.getElementById("userAddress").innerText = `${truncateAddress(window.userAddress)}`;
+        document.getElementById("logoutButton").classList.remove("hidden");
+        document.getElementById("loginButton").classList.add("hidden");
+      }
+  
+      // remove stored user address and reset frontend
+      function logout() {
+        window.userAddress = null;
+        window.localStorage.removeItem("userAddress");
+        showAddress();
+      }
+  
+      // Login with Web3 via Metamasks window.ethereum library
+      async function loginWithEth() {
+        if (window.web3) {
+          try {
+            // We use this since ethereum.enable() is deprecated. This method is not
+            // available in Web3JS - so we call it directly from metamasks' library
+            const selectedAccount = await window.ethereum
+              .request({
+                method: "eth_requestAccounts",
+              })
+              .then((accounts) => accounts[0])
+              .catch(() => {
+                throw Error("No account selected!");
+              });
+            window.userAddress = selectedAccount;
+            window.localStorage.setItem("userAddress", selectedAccount);
+            showAddress();
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          alert("No ETH brower extension detected.");
+        }
+      }
+
+
+
+
+
+
+
+
+
+
+      function showModal() {
+        modal.style.display = "block";
+      }
+
+      function showModal2() {
+        modal2.style.display = "block";
+      }
+
+      function showModal3() {
+        modal3.style.display = "block";
+      }
+
+      function showModal4() {
+        modal4.style.display = "block";
+      }
+
+      function showModal5() {
+        modal5.style.display = "block";
+      }
+
+
+
+
+
+
+
+
+
+      let questChance1 
+      let questChance2 
+      let questChance3 
+      let questChance4 
+      let questChance5 
+      let questChance6 
+
+
+
+
+
+      function getSendQuestId(btn) {
+        let n = parseInt(btn.id);
+        let checkId = allStats.filter(id => id.tokenId == n )
+        let totalStats = parseInt(checkId[0][0].hp) + parseInt(checkId[0][0].atk) + parseInt(checkId[0][0].def) + parseInt(checkId[0][0].spd)
+        questChance1 = ((2000 - (1500 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance1 < 0 ) { questChance1 = "0"}
+        if (questChance1 > 100 ) { questChance1 = "100"}
+        document.getElementById("chance1").innerHTML = questChance1 + "%";
+
+        questChance2 = ((2000 - (2300 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance2 < 0 ) { questChance2 = "0"}
+        if (questChance2 > 100 ) { questChance1 = "100"}
+        document.getElementById("chance2").innerHTML = questChance2 + "%";
+
+        questChance3 = ((2000 - (2800 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance3 < 0 ) { questChance3 = "0"}
+        if (questChance3 > 100 ) { questChance3 = "100"}
+        document.getElementById("chance3").innerHTML = questChance3 + "%";
+
+        questChance4 = ((2000 - (3600 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance4 < 0 ) { questChance4 = "0"}
+        if (questChance4 > 100 ) { questChance4 = "100"}
+        document.getElementById("chance4").innerHTML = questChance4 + "%";
+
+        questChance5 = ((2000 - (4300 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance5 < 0 ) { questChance5 = "0"}
+        if (questChance5 > 100 ) { questChance5 = "100"}
+        document.getElementById("chance5").innerHTML = questChance5 + "%";
+
+        questChance6 = ((2000 - (5000 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance6 < 0 ) { questChance6 = "0"}
+        if (questChance6 > 100 ) { questChance6 = "100"}
+        document.getElementById("chance6").innerHTML = questChance6 + "%";
+
+        startQuestGooeyId = n;
+      }
+
+      function getQuestId(btn) {
+        let n = parseInt(btn.id);
+        startQuestType = n;
+        // console.log(startQuestType)
+        sendQuest()
+      }
+
+
+
+
+
+      function getCompleteQuestId(btn) {
+        let n = parseInt(btn.id);
+        returnQuestGooeyId = n;
+        completeQuest()
+      }
+
+      function getCancelQuestId(btn) {
+        let n = parseInt(btn.id);
+        cancelQuestGooeyId = n;
+        cancelQuest()
+      }
+
+
+
+
+
+      function getTransferId(btn) {
+        let n = parseInt(btn.id);
+        transferTokenId = n;
+        // transferGooey()
+      }
+
+      function getValueWallet() {
+        transferTo = document.getElementById("gooey-receiver").value;
+      }
+
+      function getTransferWallet() {
+        let n = document.getElementById("gooey-receiver").value;
+        transferTo = n;
+        // console.log(transferTo)
+        transferGooey()
+      }
+
+
+
+
+
+      function getFruitIdToConsume(btn) {
+        let n = parseInt(btn.id);
+        fruitIdToConsume = n;
+      }
+
+      function getFruitValues() {
+        let gooeyId = document.getElementById("eat-fruit-id").value;
+        gooeyId = parseInt(gooeyId)
+        gooeyConsumeFruitId = gooeyId
+        let fruitAmount = document.getElementById("eat-fruit-amount").value;
+        fruitAmount = parseInt(fruitAmount)
+        amountToConsume = fruitAmount
+        eatFruit()
+      }
+
+      function getFruitIdToTransfer(btn) { 
+        let n = parseInt(btn.id);
+        transferFruitTokenId = n
+        // console.log(n)
+      }
+
+      function transferFruitConfirm() { 
+        let fruitReceiver = document.getElementById("fruit-receiver").value;
+        transferFruitTo = fruitReceiver
+        transferFruit()
+      }
+
+      
+      
+
+  
+
+
+      
+      
+
+
+/////////// Questing /////////////////////////////////////////////////////////////////////////////////////////////////
+
+      // let startQuestGooeyIdNode = document.getElementById("sendQuestGooeyId")
+      let startQuestGooeyId 
+      // function getValueSendQuest1() {
+      //   if (startQuestGooeyIdNode != null) {
+      //     startQuestGooeyId = startQuestGooeyIdNode.value
+      //     // console.log(startQuestGooeyId)
+      //   }
+      // }
+      // let startQuestTypeNode = document.getElementById("sendQuestId")
+      let startQuestType
+      // function getValueSendQuest2() {
+      //   if (startQuestTypeNode != null) {
+      //     startQuestType = startQuestTypeNode.value
+      //     // console.log(startQuestType)
+      //   }
+      // }
+      async function sendQuest() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+
+        const questStart = await contract.methods.startQuest(startQuestGooeyId, startQuestType).send({ from: window.userAddress, gasPrice : '52000000000'});
+        console.log(questStart);
+      }
+
+
+
+
+
+      // let returnQuestGooeyIdNode = document.getElementById("returnQuestGooeyId")
+      let returnQuestGooeyId
+      // function getValueCompleteQuest() {
+      //   if (returnQuestGooeyIdNode != null) {
+      //     returnQuestGooeyId = returnQuestGooeyIdNode.value
+      //     // console.log(returnQuestGooeyId)
+      //   }
+      // }
+      async function completeQuest() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+
+        const questReturn = await contract.methods.completeQuest(returnQuestGooeyId).send({ from: window.userAddress }
+        );
+        const info = await contract.methods.getCurrentQuestInfoABIv1(returnQuestGooeyId).call({ from: window.userAddress, gasPrice : '52000000000' });
+        console.log(info)
+        // const gwei = await contract.methods.maximumCallGwei().send({ from: window.userAddress });
+        console.log(questReturn);
+      }
+
+
+
+
+
+      // let cancelQuestGooeyIdNode = document.getElementById("cancelQuestGooeyId")
+      let cancelQuestGooeyId
+      // function getValueCancelQuest() {
+      //   if (cancelQuestGooeyIdNode != null) {
+      //     cancelQuestGooeyId = cancelQuestGooeyIdNode.value
+      //     // console.log(cancelQuestGooeyId)
+      //   }
+      // }
+      async function cancelQuest() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+
+        const questCancel = await contract.methods.cancelQuest(cancelQuestGooeyId).send({ from: window.userAddress, gasPrice : '52000000000' });
+        console.log(questCancel);
+      }
+
+/////////// Questing END /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+/////////// Transfer Gooeys /////////////////////////////////////////////////////////////////////////////////////////////////
+
+let transferFrom
+      let transferTo
+      let transferTokenId
+      async function transferGooey() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+
+        const check = await contract.methods.safeTransferFrom(window.userAddress, transferTo, transferTokenId).send({ from: window.userAddress, gasPrice : '52000000000' });
+        console.log(check);
+      }
+
+/////////// Transfer Gooeys END /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+/////////// Fruits /////////////////////////////////////////////////////////////////////////////////////////////////
+
+      let gooeyConsumeFruitId
+      let amountToConsume
+      let fruitIdToConsume
+      async function eatFruit() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+
+         const eat = await contract.methods.consumeFruit(gooeyConsumeFruitId, amountToConsume, fruitIdToConsume).send({ from: window.userAddress, gasPrice : '52000000000' }) 
+         console.log(eat)
+      }
+
+      // let transferFruitFrom
+      let transferFruitTo
+      let transferFruitTokenId
+      async function transferFruit() {
+        const contract = new window.web3.eth.Contract(fruitsABI, fruitsContract);
+
+        const tfruit = await contract.methods.transfer(transferFruitTo, transferFruitTokenId, 1).send({ from: window.userAddress, gasPrice : '52000000000' });
+        console.log(tfruit);
+      }
+
+
+      async function buyFruit() {
+        const contract = new window.web3.eth.Contract(fruitsABI2, fruitsContract2);
+
+        const tfruit = await contract.methods.mint(window.userAddress, 1).send({ from: window.userAddress, gasPrice : '52000000000' });
+        console.log(tfruit);
+      }
+
+      // // let gooContract = "0x6F3Cc27E17a0f2e52D8e7693FF0d892Cea1854bF"
+      // async function buyFruit() {
+      //   const contract = new window.web3.eth.Contract(fruitsABI, fruitsContract);
+
+      //   const bfruit = await contract.methods.allowance(window.userAddress, "0x5bDEc91CB5994D176b6Ca8d7412dDAD0B99aF20a").send({ from: window.userAddress });
+      //   console.log(bfruit);
+      // }
+
+/////////// Fruits END /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+/////////// Tumble /////////////////////////////////////////////////////////////////////////////////////////////////
+
+      let tumbleGooeyId1
+      let tumbleGooeyId2
+      async function tumble() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+
+        const tumble = await contract.methods.tumble(tumbleGooeyId1, tumbleGooeyId2).send({ from: window.userAddress, gasPrice : '52000000000' });
+        console.log(tumble);
+
+        // const check = await contract.methods.tokensOfOwner("0xf3da67f1cfd5511f830c3a7e4b820a3b702746ba").call({ from: window.userAddress });
+        // console.log(check);
+      }
+      
+/////////// Tumble END /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      async function questInfo() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+
+        const info1 = await contract.methods.getQuestTypeInfoABIv1(0).call({ from: window.userAddress });
+        console.log(info1);
+      }
+
+      async function currentQuestInfo() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+
+        const info2 = await contract.methods.getCurrentQuestInfoABIv1(94).call({ from: window.userAddress });
+        console.log(info2);
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      // gooeyABI, CONTRACT_ADDRESS
+      // fruitsABI, fruitsContract
+
+      async function check() {
+        const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+        const contract = new window.web3.eth.Contract(gooeyABI, CONTRACT_ADDRESS);
+        const contract2 = new window.web3.eth.Contract(fruitsABI, fruitsContract);
+
+        // const check = await contract2.methods.loadAllGooeysForPlayer("0x970006c8ec4f30905bee133bf2018413066c26fe").call({ from: window.userAddress });
+        // const check = await contract2.methods.loadAllGooeysForPlayer("0x970006c8ec4f30905bee133bf2018413066c26fe").call({ from: window.userAddress });
+        // console.log(check);
+        // const latest = await web3.eth.getBlockNumber()
+        // const latest = await contract.methods.gameStartBlock(tumbleGooeyId1, tumbleGooeyId2).send({ from: window.userAddress });
+
+        const check = await contract.methods.getCurrentQuestInfoABIv1(94).call({ from: window.userAddress });
+        console.log(check);
+
+        let latestBlock = await web3.eth.getBlockNumber()
+        let qtime = parseInt(check[2]) - parseInt(check[1])
+        let sec = parseInt(check[2]) - parseInt(latestBlock)
+        console.log(sec);
+        
+        // const check = await contract.methods.checkIn(94).call({ from: window.userAddress })
+        
+        // let batch = new web3.BatchRequest();
+        // for (let i = 0; i < userGooeys.length; i++) {
+        //   batch.add(contract.methods.completeQuest(userGooeys[i]).send({ from: window.userAddress }));
+        // }
+        // batch.execute();
+        // console.log(batch);
+        // console.log(typeof(window.userAddress))
+      }
+
+      // const check = await contract2.methods.loadExterns("0xdDa40cdfe4A0090f42Ff49f264A831402ADB801A", "0x6F3Cc27E17a0f2e52D8e7693FF0d892Cea1854bF", "0x2375874eb409095efa6090bf7085ae3922543c72", "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1").call({ from: window.userAddress });
+      // const check = await contract2.methods.loadTokenAndFruitInfo("0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA", 14).call({ from: window.userAddress });
+      // const check = await contract2.methods.loadAllGooeysForPlayer("0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA").call({ from: window.userAddress });
+      // const check = await contract2.methods.loadFruitByOwner("0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA", 14).call({ from: window.userAddress });
+      // const check = await contract2.methods.getTumblingFeesForGooeys("0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA", 94).call({ from: window.userAddress });
+      
+      // const check = await contract.methods.loadGooeyStats([94, 1137]).call({ from: window.userAddress });
+      // const check = await contract.methods.getCurrentQuestInfoABIv1(94).call({ from: window.userAddress });
+      // const check = await contract.methods.gooeyAttributes(1240).call({ from: window.userAddress });
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      // let userGooeys = []
+    
+
+      // async function getURI() {
+      //   const CONTRACT_ADDRESS = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1";
+      //   const contract = new window.web3.eth.Contract(ABI, CONTRACT_ADDRESS);
+      //   const uri = await contract.methods.tokenURI(94).call({ from: window.userAddress })
+      //   console.log(uri)
+
+      //   // userGooeys = uri
+      // }
+
+      // axios.get('https://gooeys.dogira.finance/' + nr)
+      //   .then(function (response) {
+      //     // handle success
+      //     console.log(response);
+      //   })
+      //   .catch(function (error) {
+      //     // handle error
+      //     console.log(error);
+      //   })
+
+
+    // const myGooeys = document.querySelector("#MyGooeys")
+
+    // data.MyGooeys.forEach(gooey => {
+    //   const div = document.createElement("div")
+    //   const img = document.createElement("img")
+    //   img.src = "https://gooeys.dogira.finance/94.jpg"
+    //   img.alt = "Gooey"
+
+    //   // Create content like titles and text
+      
+
+    //   // Add element to list
+    //   div.appendChild(img)
+    //   myGooeys.appendChild(div)
+    // })
+
+    </script>
+
+  </body>
