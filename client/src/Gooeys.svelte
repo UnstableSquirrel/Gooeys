@@ -27,6 +27,9 @@
     let questBatchCompletion = []
     let questBatchSending = []
 
+    let soonestReturner = []
+    let comeBackIn = []
+
 
 
 
@@ -57,6 +60,7 @@
                 if (questTimeSeconds < 0) { 
                   questTimeSeconds = 0
                 }
+                soonestReturner.push(questTimeSeconds)
                 questTime.push({
                   "Days" : Math.floor(questTimeSeconds / (3600 * 24)), 
                   "Hours" : Math.floor(questTimeSeconds % (3600 * 24) / 3600), 
@@ -83,6 +87,14 @@
         // window.localStorage.deleteItem("selectedQuests")
         // console.log(questBatchCompletion)
         // console.log(questBatchSending)
+        soonestReturner.sort((a, b) => a - b)
+        comeBackIn = {
+              "Days" : Math.floor(soonestReturner[0] / (3600 * 24)), 
+              "Hours" : Math.floor(soonestReturner[0] % (3600 * 24) / 3600), 
+              "Minutes" : Math.floor(soonestReturner[0] % 3600 / 60), 
+              "Seconds" : Math.floor(soonestReturner[0] % 60)
+            }
+        // console.log(comeBackIn)
       }
 
 
@@ -317,6 +329,44 @@
     {#await getData()}
     <p style="font-size: 25px; font-weight: 700; color: white; text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;">Loading ...</p>
     {:then loaded}
+    <div style="display: grid; justify-items: center; margin: 0px 0px 45px 0px; width: 240px;">
+      <h3><span style="font-size: 20px; font-weight: 700;">Come back in</span></h3>
+      <br>
+      <div style="text-align: center; display: flex;">
+        <div style="text-align: center; display: grid; margin-right: 10px;">
+          <span style="font-size: 18px; font-weight: 700; color: white; text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;">
+            {comeBackIn.Days} 
+          </span>
+          <span>
+            Days 
+          </span>
+        </div>
+        <div style="text-align: center; display: grid; margin-right: 10px;">
+          <span style="font-size: 18px; font-weight: 700; color: white; text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;">
+            {comeBackIn.Hours}
+          </span>
+          <span>
+            Hours 
+          </span>
+        </div>
+        <div style="text-align: center; display: grid; margin-right: 10px;">
+          <span style="font-size: 18px; font-weight: 700; color: white; text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;">
+            {comeBackIn.Minutes} 
+          </span>
+          <span>
+            Minutes
+          </span>
+        </div>
+        <div style="text-align: center; display: grid;">
+          <span style="font-size: 18px; font-weight: 700; color: white; text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;">
+            {comeBackIn.Seconds}
+          </span>
+          <span>
+            Seconds
+          </span>
+        </div> 
+      </div>
+    </div>
     <div id="Gooey-Container">
       {#each allStats as stat, index}
       <div class="Gooey">
@@ -365,13 +415,13 @@
 
         {#if checkOnQuest[index] == 0}
         <div style="background-color: rgb(255, 144, 144); justify-content: center; height: 34px;">
-          <p style="justify-content: center; font-size: 17px; font-weight: 700;">No Quest <span style="display: none; width: fit-content;">{questBatchSending.push(userGooeys[0][index])}</span></p>
+          <p style="justify-content: center; font-size: 17px; font-weight: 700;">No Quest</p>
         </div>
         {/if}
 
         {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
         <div style="background-color: rgb(151, 255, 125); justify-content: center; height: 34px;">
-          <p style="justify-content: center; font-size: 17px; font-weight: 700;">Quest Completed <span style="display: none; width: fit-content;">{questBatchCompletion.push(userGooeys[0][index])}</span></p>
+          <p style="justify-content: center; font-size: 17px; font-weight: 700;"><span style="display: none; width: fit-content;">{questBatchCompletion.push(userGooeys[0][index])}</span>Quest Completed</p>
         </div>
         {/if}
 
@@ -443,6 +493,9 @@
         {/if}
 
       </div>
+      {#if (gooeyLife[index].Days >= 0) && (gooeyLife[index].Hours >= 9) && (gooeyLife[index].Minutes >= 0) && (checkOnQuest[index] == 0)}
+        <span style="display: none;">{questBatchSending.push(userGooeys[0][index])}</span>
+      {/if}
       {/each}
     </div>
 
