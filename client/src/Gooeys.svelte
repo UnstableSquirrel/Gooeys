@@ -1,0 +1,1199 @@
+<script>
+
+    // import { Web3 } from "svelte-web3"
+    import GooeyABI from "./contracts/Gooeys.json"
+    // import { wallet } from './App.svelte'
+
+
+
+
+
+    const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
+    let wallet = window.localStorage.getItem("userAddress")
+    $: wallet
+    
+
+
+
+
+    let allStats = []
+    let userGooeys = []
+
+    let latestBlock
+    let gooeyLife = []
+    let questTime = []
+
+    let checkOnQuest = []
+    let questBatchCompletion = []
+    let questBatchSending = []
+
+
+
+
+
+    async function getData() {
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
+
+        const ids = await contract.methods.tokensOfOwner(wallet).call({ from: wallet })
+        // const tumbleFees = await contract2.methods.getTumblingFeesForGooeys("0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA", 94).call({ from: wallet })
+
+        userGooeys.push(ids)
+        // console.log(userGooeys)
+
+          for (let i in userGooeys) {  
+            
+            if (userGooeys.hasOwnProperty(i)) {
+              let value = userGooeys[i]
+              for (const x of value) {
+                const data = await contract.methods.gooeyAttributes(x).call({ from: wallet })
+                const questData = await contract.methods.getCurrentQuestInfoABIv1(x).call({ from: wallet })
+                latestBlock = await web3.eth.getBlockNumber()
+
+                checkOnQuest.push(questData[0])
+                allStats.push(data)
+
+                let questTimeSeconds = (questData[2] - latestBlock) * 2
+                parseInt(questTimeSeconds)
+                if (questTimeSeconds < 0) { 
+                  questTimeSeconds = 0
+                }
+                questTime.push({
+                  "Days" : Math.floor(questTimeSeconds / (3600 * 24)), 
+                  "Hours" : Math.floor(questTimeSeconds % (3600 * 24) / 3600), 
+                  "Minutes" : Math.floor(questTimeSeconds % 3600 / 60), 
+                  "Seconds" : Math.floor(questTimeSeconds % 60)
+                })
+              }
+            }
+          }
+          for (let i in allStats) {  
+            let foodStoreSeconds = (parseInt(allStats[i].life.foodStore) - (parseInt(latestBlock) - parseInt(allStats[i].lastUpdateBlock))) * 2
+            parseInt(foodStoreSeconds)
+            if (foodStoreSeconds < 0) { 
+              foodStoreSeconds = 0
+            }
+            gooeyLife.push({
+              "Days" : Math.floor(foodStoreSeconds / (3600 * 24)), 
+              "Hours" : Math.floor(foodStoreSeconds % (3600 * 24) / 3600), 
+              "Minutes" : Math.floor(foodStoreSeconds % 3600 / 60), 
+              "Seconds" : Math.floor(foodStoreSeconds % 60)
+            })
+          }
+        allStats = allStats
+        // window.localStorage.deleteItem("selectedQuests")
+        // console.log(questBatchCompletion)
+        // console.log(questBatchSending)
+      }
+
+
+
+
+
+
+
+
+
+
+      let questChance1 
+      let questChance2 
+      let questChance3 
+      let questChance4 
+      let questChance5 
+      let questChance6 
+
+      let Modal1 = false
+      let modalSwtich1 = "close"
+
+      function closeModal1() {
+        Modal1 = false
+        modalSwtich1 = "close"
+      }
+
+      function openModal1() {
+        Modal1 = true
+        modalSwtich1 = "open"
+      }
+
+
+
+
+
+      let Modal2 = false
+      let modalSwtich2 = "close"
+
+      function closeModal2() {
+        Modal2 = false
+        modalSwtich2 = "close"
+      }
+
+      function openModal2() {
+        Modal2 = true
+        modalSwtich2 = "open"
+      }
+
+
+
+
+      function getSendQuestId(btn) {
+        let n = parseInt(btn)
+        let checkId = allStats.filter(id => id.tokenId == n )
+        let totalStats = parseInt(checkId[0][0].hp) + parseInt(checkId[0][0].atk) + parseInt(checkId[0][0].def) + parseInt(checkId[0][0].spd)
+        console.log(totalStats)
+
+        questChance1 = ((2000 - (1500 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance1 < 0 ) { questChance1 = "0"}
+        if (questChance1 > 100 ) { questChance1 = "100"}
+
+        questChance2 = ((2000 - (2300 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance2 < 0 ) { questChance2 = "0"}
+        if (questChance2 > 100 ) { questChance1 = "100"}
+
+        questChance3 = ((2000 - (2800 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance3 < 0 ) { questChance3 = "0"}
+        if (questChance3 > 100 ) { questChance3 = "100"}
+
+        questChance4 = ((2000 - (3600 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance4 < 0 ) { questChance4 = "0"}
+        if (questChance4 > 100 ) { questChance4 = "100"}
+
+        questChance5 = ((2000 - (4300 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance5 < 0 ) { questChance5 = "0"}
+        if (questChance5 > 100 ) { questChance5 = "100"}
+
+        questChance6 = ((2000 - (5000 - totalStats)) / 2000 * 100).toFixed(2)
+        if (questChance6 < 0 ) { questChance6 = "0"}
+        if (questChance6 > 100 ) { questChance6 = "100"}
+
+        startQuestGooeyId = n
+      }
+
+      function getQuestId(btn) {
+        let n = parseInt(btn)
+        startQuestType = n
+        // console.log(startQuestType)
+        sendQuest()
+      }
+
+
+
+
+
+      function getCompleteQuestId(btn) {
+        let n = parseInt(btn)
+        // console.log(n)
+        returnQuestGooeyId = n
+        completeQuest()
+      }
+
+      function getCancelQuestId(btn) {
+        let n = parseInt(btn)
+        // console.log(n)
+        cancelQuestGooeyId = n
+        cancelQuest()
+      }
+
+
+
+
+
+      function getTransferId(btn) {
+        let n = parseInt(btn)
+        // console.log(n)
+        transferTokenId = n
+        transferGooey()
+      }
+
+      let gooeyReceiverWallet
+      function getTransferWallet() {
+        transferTo = gooeyReceiverWallet
+        transferGooey()
+      }
+
+
+
+
+
+
+
+
+
+      /////////// Questing /////////////////////////////////////////////////////////////////////////////////////////////////
+
+      let startQuestGooeyId 
+      let startQuestType
+      async function sendQuest() {
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
+
+        const questStart = await contract.methods.startQuest(startQuestGooeyId, startQuestType).send({ from: wallet, gasPrice : '52000000000'})
+        console.log(questStart)
+      }
+
+
+
+
+
+      let returnQuestGooeyId
+      async function completeQuest() {
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
+
+        const questReturn = await contract.methods.completeQuest(returnQuestGooeyId).send({ from: wallet, gasPrice : '52000000000' })
+        // const info = await contract.methods.getCurrentQuestInfoABIv1(returnQuestGooeyId).call({ from: wallet, gasPrice : '52000000000' })
+        // console.log(info)
+        // const gwei = await contract.methods.maximumCallGwei().send({ from: wallet })
+        console.log(questReturn)
+      }
+
+
+
+
+
+      async function completeAllQuests() {
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
+        
+        let batch = new web3.BatchRequest()
+        for (let i = 0; i < questBatchCompletion.length; i++) {
+          batch.add(contract.methods.completeQuest(questBatchCompletion[i]).send({ from: wallet, gasPrice : '52000000000' }))
+        }
+        batch.execute()
+        // console.log(batch)
+      }
+
+      async function sendAllToQuests() {
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
+        
+        let batch = new web3.BatchRequest()
+        for (let i = 0; i < questBatchSending.length; i++) {
+          batch.add(contract.methods.startQuest(questBatchSending[i], parseInt(window.localStorage.getItem(questBatchSending[i]))).send({ from: wallet, gasPrice : '52000000000' }))
+        }
+        batch.execute()
+        // console.log(batch)
+      }
+
+
+
+
+      let cancelQuestGooeyId
+      async function cancelQuest() {
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
+
+        const questCancel = await contract.methods.cancelQuest(cancelQuestGooeyId).send({ from: wallet, gasPrice : '52000000000' })
+        console.log(questCancel)
+      }
+
+      /////////// Questing END /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+      /////////// Transfer Gooeys /////////////////////////////////////////////////////////////////////////////////////////////////
+
+      // let transferFrom
+      let transferTo
+      let transferTokenId
+      async function transferGooey() {
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
+
+        const transfer = await contract.methods.safeTransferFrom(wallet, transferTo, transferTokenId).send({ from: wallet, gasPrice : '52000000000' })
+        console.log(transfer);
+      }
+
+      /////////// Transfer Gooeys END /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+      function questIdToStore(i, d) {
+        let GooeyId = d
+        let QuestId = i.target.value
+        // console.log(id)
+        window.localStorage.setItem(GooeyId, QuestId)
+      }
+
+</script>
+
+<main>
+
+    {#await getData()}
+    <p style="font-size: 25px; font-weight: 700; color: white; text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;">Loading ...</p>
+    {:then loaded}
+    <div id="Gooey-Container">
+      {#each allStats as stat, index}
+      <div class="Gooey">
+          <img src="https://gooeys.dogira.finance/{stat.tokenId}.jpg" alt="{stat.tokenId}">
+        <div>
+          <p>Gooey ID: #<span style="font-size: 12px;">{stat.tokenId}</span></p>
+        </div>
+
+        <div>
+          <p>Health: <span>{stat.stats.hp}</span></p>
+          <p>Attack: <span>{stat.stats.atk}</span></p>
+          <p>Defense: <span>{stat.stats.def}</span></p>
+          <p>Speed: <span>{stat.stats.spd}</span></p>
+          <p>Total Strength: 
+            <span id="total" style="font-size: 15px; font-weight: 700; color: rgb(211, 250, 255); text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">
+            {parseInt(stat.stats.hp) + parseInt(stat.stats.atk) + parseInt(stat.stats.def) + parseInt(stat.stats.spd)}
+            </span>
+          </p>
+        </div>
+
+        <div>
+          <p>Gen: <span>{stat.life.generation}</span></p>
+          <p>Tumble Bonus: <span>{stat.life.tumbleRollBonus}%</span></p>
+          <p>Total Tumbles: <span>{stat.life.totalTumbles}</span></p>
+          <p>Tumbles Left: <span>{stat.life.tumblesRemaining}</span></p>
+          <p>Nexus: <span>{stat.life.bond}</span></p>
+        </div>
+
+        <div>
+          <p>Food Store: </p>
+          <p>{gooeyLife[index].Days} Days</p>
+          <p>{gooeyLife[index].Hours} Hours</p>
+          <p>{gooeyLife[index].Minutes} Minutes</p>
+          <p>{gooeyLife[index].Seconds} Seconds</p>
+        </div>
+
+        {#if (questTime[index].Days > 0) || (questTime[index].Hours > 0) || (questTime[index].Minutes > 0) || (questTime[index].Seconds > 0) && (checkOnQuest[index] > 0)}
+        <div>
+          <p>Quest Time: </p>
+          <p>{questTime[index].Days} Days</p>
+          <p>{questTime[index].Hours} Hours</p>
+          <p>{questTime[index].Minutes} Minutes</p>
+          <p>{questTime[index].Seconds} Seconds</p>
+        </div>
+        {/if}
+
+        {#if checkOnQuest[index] == 0}
+        <div style="background-color: rgb(255, 144, 144); justify-content: center; height: 34px;">
+          <p style="justify-content: center; font-size: 17px; font-weight: 700;">No Quest <span style="display: none; width: fit-content;">{questBatchSending.push(userGooeys[0][index])}</span></p>
+        </div>
+        {/if}
+
+        {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
+        <div style="background-color: rgb(151, 255, 125); justify-content: center; height: 34px;">
+          <p style="justify-content: center; font-size: 17px; font-weight: 700;">Quest Completed <span style="display: none; width: fit-content;">{questBatchCompletion.push(userGooeys[0][index])}</span></p>
+        </div>
+        {/if}
+
+        <div class="quest-button-area">
+          {#if checkOnQuest[index] > 0}
+          <button class="disabled" disabled="true">Send to Quest</button>
+          {/if}
+          {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] == 0)}
+          <button on:mouseup="{openModal1}" on:click="{getSendQuestId(stat.tokenId)}">Send to Quest</button>
+          {/if}
+
+          {#if !((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0))}
+          <button class="disabled" disabled="true">Complete Quest</button>
+          {/if}
+          {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
+          <button on:click="{getCompleteQuestId(stat.tokenId)}">Complete Quest</button>
+          {/if}
+
+          {#if checkOnQuest[index] == 0}
+            <button class="disabled" disabled="true">Cancel Quest</button>
+          {/if}
+          {#if checkOnQuest[index] > 0}
+          <button on:click="{getCancelQuestId(stat.tokenId)}">Cancel Quest</button>
+          {/if}
+        </div>
+
+        <div class="transfer-button-container">
+          <button on:click="{openModal2}" on:click="{getTransferId(stat.tokenId)}">Transfer</button>
+        </div>
+
+        <!-- {#if selectedQuests == undefined}
+        <div class="batch-quest-container">
+          <label for="batch-quests">Batch Quest:</label>
+          <select id="batch-quests" on:load="{window.localStorage.setItem("selectedQuests", JSON.stringify(selectedQuests))}">
+            {#each questOptions as o, i}
+            <option value="0">{o[i]}</option>
+            {/each}
+          </select> 
+        </div>
+        {/if} -->
+
+        {#if window.localStorage.getItem(stat.tokenId) == undefined}
+        <div class="batch-quest-container">
+          <label for="batch-quests">Batch Quest:</label>
+          <select id="batch-quest">
+            <span style="display: none;">{window.localStorage.setItem(stat.tokenId, 0)}</span>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={0}>Common</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={1}>Uncommon</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={2}>Rare</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={3}>Epic</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={4}>Legendary</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={5}>Mythical</option>
+          </select> 
+        </div>
+        {/if}
+
+        {#if window.localStorage.getItem(stat.tokenId) != undefined}
+        <div class="batch-quest-container">
+          <label for="batch-quests">Batch Quest:</label>
+          <select value="{parseInt(window.localStorage.getItem(stat.tokenId))}" id="batch-quest">
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={0}>Common</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={1}>Uncommon</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={2}>Rare</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={3}>Epic</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={4}>Legendary</option>
+            <option on:click="{(i) => questIdToStore(i, stat.tokenId)}" value={5}>Mythical</option>
+          </select> 
+        </div>
+        {/if}
+
+      </div>
+      {/each}
+    </div>
+
+
+
+
+    {#if questBatchCompletion.length == 0}
+    <div style="margin: 50px 0px 25px 0px;">
+      <button class="disabled" disabled="true">Complete All Quests</button>
+    </div>
+    {/if}
+    {#if questBatchCompletion.length > 0}
+    <div>
+      <button on:click="{completeAllQuests}">Complete All Quests</button>
+    </div>
+    {/if}
+
+    {#if questBatchSending.length == 0}
+    <div style="margin: 0px 0px 50px 0px;">
+      <button class="disabled" disabled="true">Send All To Quests</button>
+    </div>
+    {/if}
+    {#if questBatchSending.length > 0}
+    <div>
+      <button on:click="{sendAllToQuests}">Send All To Quests</button>
+    </div>
+    {/if}
+
+
+
+
+
+    {:catch error}
+    <div id="Gooey-Container">
+      <div id="No-Gooeys">You don't have any Gooeys in your Wallet. Get one at <a href="https://opensea.io/collection/gooeysp2e">Opensea!</a></div>
+    </div>
+    {/await}
+
+
+
+
+
+
+
+
+
+
+    <div id="modal-container" class="{"modal " + modalSwtich1}">
+        <div class="modal-content">
+            <span on:click="{closeModal1}" class="close-button">×</span>
+
+            <div class="Quests-Container">
+              
+              <div class="Quest">
+                <h4>Common (10H)</h4>
+                <div>
+                  <p>$GOO Reward</p>
+                  <p>3,780 - 4,536</p>
+                </div>
+                <div>
+                  <p>Fruit Reward</p>
+                  <p>0 - 1</p>
+                </div>
+                <div>
+                  <p>Quest Difficulty</p>
+                  <p>1500</p>
+                  <p>Succes Chance</p>
+                  <p id="chance1">{questChance1}%</p>
+                </div>
+                <div>
+                  <button on:click="{() => getQuestId(0)}" on:mouseup="{closeModal1}">Send to Quest</button>
+                </div>
+              </div>
+
+              <div class="Quest">
+                <h4>Uncommon (18H)</h4>
+                <div>
+                  <p>$GOO Reward</p>
+                  <p>9,504 - 11,232</p>
+                </div>
+                <div>
+                  <p>Fruit Reward</p>
+                  <p>0 - 2</p>
+                </div>
+                <div>
+                  <p>Quest Difficulty</p>
+                  <p>2300</p>
+                  <p>Succes Chance</p>
+                  <p id="chance2">{questChance2}%</p>
+                </div>
+                <div>
+                  <button on:click="{() => getQuestId(1)}" on:mouseup="{closeModal1}">Send to Quest</button>
+                </div>
+              </div>
+
+              <div class="Quest">
+                <h4>Rare (36H)</h4>
+                <div>
+                  <p>$GOO Reward</p>
+                  <p>25,872 - 32,928</p>
+                </div>
+                <div>
+                  <p>Fruit Reward</p>
+                  <p>1 - 2</p>
+                </div>
+                <div>
+                  <p>Quest Difficulty</p>
+                  <p>2800</p>
+                  <p>Succes Chance</p>
+                  <p id="chance3">{questChance3}%</p>
+                </div>
+                <div>
+                  <button on:click="{() => getQuestId(2)}" on:mouseup="{closeModal1}">Send to Quest</button>
+                </div>
+              </div>
+
+              <div class="Quest">
+                <h4>Epic (60H)</h4>
+                <div>
+                  <p>$GOO Reward</p>
+                  <p>57,024 - 71,280</p>
+                </div>
+                <div>
+                  <p>Fruit Reward</p>
+                  <p>1 - 3</p>
+                </div>
+                <div>
+                  <p>Quest Difficulty</p>
+                  <p>3600</p>
+                  <p>Succes Chance</p>
+                  <p id="chance4">{questChance4}%</p>
+                </div>
+                <div>
+                  <button on:click="{() => getQuestId(3)}" on:mouseup="{closeModal1}">Send to Quest</button>
+                </div>
+              </div>
+
+              <div class="Quest">
+                <h4>Legendary (72H)</h4>
+                <div>
+                  <p>$GOO Reward</p>
+                  <p>70,560 - 105,840</p>
+                </div>
+                <div>
+                  <p>Fruit Reward</p>
+                  <p>2 - 4</p>
+                </div>
+                <div>
+                  <p>Quest Difficulty</p>
+                  <p>4300</p>
+                  <p>Succes Chance</p>
+                  <p id="chance5">{questChance5}%</p>
+                </div>
+                <div>
+                  <button on:click="{() => getQuestId(4)}" on:mouseup="{closeModal1}">Send to Quest</button>
+                </div>
+              </div>
+
+              <div class="Quest">
+                <h4>Mythical (120H)</h4>
+                <div>
+                  <p>$GOO Reward</p>
+                  <p>164,346 - 227,556</p>
+                </div>
+                <div>
+                  <p>Fruit Reward</p>
+                  <p>4 - 8</p>
+                </div>
+                <div>
+                  <p>Quest Difficulty</p>
+                  <p>5000</p>
+                  <p>Succes Chance</p>
+                  <p id="chance6">{questChance6}%</p>
+                </div>
+                <div>
+                  <button on:click="{() => getQuestId(5)}" on:mouseup="{closeModal1}">Send to Quest</button>
+                </div>
+              </div>
+              
+            </div>
+
+      </div>
+    </div>
+
+    <div id="modal-container2" class="{"modal2 " + modalSwtich2}">
+      <div class="modal-content2">
+        <span on:click="{closeModal2}" class="close2">×</span>
+
+        <div>
+          <div>
+            <h4>Receiving Wallet</h4>
+            <div>
+              <input id="gooey-receiver" bind:value="{gooeyReceiverWallet}" type="string" placeholder="Wallet Address">
+              <button on:click="{getTransferWallet}" on:click="{closeModal2}">Transfer Gooey</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+</main>
+
+<style>
+
+    main {
+      margin-top: 70px;
+      display: grid;
+      justify-items: center;
+    }
+
+    #Gooey-Container {
+      display: grid;
+      grid-template-columns: auto auto auto auto auto;
+      grid-gap: 10px;
+      border: 5px solid rgba(49, 33, 63, 0.5);
+      border-radius: 10px;
+      background-color: rgba(173, 104, 236, 0.5);
+      padding: 10px;
+    }
+
+    .close {
+      display: none;
+    }
+
+    .open {
+      display: block !important;
+    }
+
+    button {
+      height:40px;
+      width:max-content;
+      background:rgb(30, 156, 160);
+      text-transform:uppercase;
+      color:rgb(245, 245, 245);
+      font-weight:700;
+      letter-spacing: 1px;
+      border: 2.5px solid rgb(164, 81, 197);
+      font-size: 15px;
+      outline:none;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 0px 10px;
+    }
+
+    button {
+      transition:all .2s ease-in-out;
+    }
+
+    button:hover {
+      background:rgb(46, 227, 233);
+      text-shadow:
+        0 0 10px rgba(255,255,255, 1),
+        0 0 50px rgba(255, 255, 255, .8),
+        0 0 75px rgba(255, 255, 255, .6),
+        0 0 76px rgba(255, 255, 255, .4),
+        0 0 77px rgba(255, 255, 255, .5),
+        0 0 78px rgba(255, 255, 255, .4),
+    }
+
+    /************** Modal ********************************************************************/
+
+      /* The Modal (background) */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close-button {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close-button:hover,
+      .close-button:focus {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+/************** Modal ********************************************************************/
+
+
+
+
+
+      .Quests-Container {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        grid-gap: 10px;
+        justify-items: center;
+        padding: 10px;
+      }
+
+      @media (min-width: 530px) and (max-width: 785px) {
+        .Quests-Container {
+          padding: 50px 0px;
+          grid-template-columns: auto auto !important;
+        }
+      }
+
+      @media (min-width: 130px) and (max-width: 529px) {
+        .Quests-Container {
+          padding: 50px 0px;
+          grid-template-columns: auto !important;
+        }
+      }
+
+      .Quest {
+        background-color: #707070;
+        border: 2px solid rgb(31, 29, 29);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        color: aliceblue;
+        text-shadow: 1px 1px 0 rgb(0, 0, 0);
+      }
+
+      .Quest:nth-child(2) {
+        background-color: #698849;
+      }
+
+      .Quest:nth-child(3) {
+        background-color: #516890;
+      }
+
+      .Quest:nth-child(4) {
+        background-color: #6c5190;
+      }
+
+      .Quest:nth-child(5) {
+        background-color: #b17a43;
+      }
+
+      .Quest:nth-child(6) {
+        background-color: #b04845;
+      }
+
+      .Quest > h4 {
+        font-size: 20px;
+        text-align: center;
+        margin: 0px 0px 10px 0px;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+
+      .Quest > div {
+        margin: 0px 0px 10px 0px;
+      }
+      
+      .Quest > div > p {
+        text-align: center;
+        margin: 5px;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+
+      .Quest > div > p:nth-child(1) {
+        text-align: center;
+        margin: 5px;
+        color:#e0b3ff; 
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+
+      .Quest > div > p:nth-child(3) {
+        text-align: center;
+        margin: 5px;
+        color:#e0b3ff; 
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+
+      .quest-img {
+        margin: 0px 5px 0px 0px;
+        width: 20px;
+        height: 20px;
+      }
+
+      .Gooey {
+        display: grid;
+        justify-items: center;
+        max-width: 200px;
+      }
+
+      .Gooey > div {
+        display: grid;
+        grid-template-columns: auto auto;
+        width: 99%;
+        width: -webkit-fill-available;
+        border-right: 1px solid rgba(0, 0, 0);
+        border-left: 1px solid rgba(0, 0, 0);
+        border-bottom: 1px solid rgba(0, 0, 0);
+        background-color: rgb(243, 227, 247);
+      }
+
+      .Gooey > div:nth-child(2) {
+        justify-content: center;
+      }
+      
+      .Gooey > div > p {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 0px 5px;
+        margin: 5px 0px;
+      }
+
+      .Gooey > div:nth-child(5) > p:nth-child(1) {
+        font-size: 10px;
+        font-weight: 700;
+        margin: 0px;
+      }
+
+      .Gooey > div:nth-child(5) > p {
+        padding: 5px 3px;
+        margin: 0px;
+      }
+
+      .Gooey > div:nth-child(5) {
+        border-top: none;
+        grid-template-columns: auto auto auto auto auto;
+        text-align: center; 
+      }
+
+      .Gooey > div:nth-child(6) > p:nth-child(1) {
+        font-size: 10px;
+        font-weight: 700;
+        margin: 0px;
+      }
+
+      .Gooey > div:nth-child(6) > p {
+        padding: 5px 3px;
+        margin: 0px;
+      }
+
+      .Gooey > div:nth-child(6) {
+        border-top: none;
+        /* border-bottom: none; */
+        grid-template-columns: auto auto auto auto auto;
+        text-align: center; 
+      }
+
+      .Gooey > div:nth-child(7) {
+        /* border-top: none; */
+        display: grid;
+        grid-template-columns: auto;
+        justify-items: center;
+        padding: 5px 0px;
+        grid-gap: 5px;
+      }
+
+      .Gooey > div:nth-child(7) > button {
+        width: 170px;
+        height: 35px;
+        font-size: 13px;
+        font-weight: 700;
+        margin: 5px 0px;
+      }
+
+      /* .Gooey > div:nth-child(3) > p:nth-child(5) {
+        text-align: center;
+        font-size: 11.7px;
+        font-weight: 700;
+        padding: 0px 10px;
+        margin: 5px 0px;
+        width: 150%;
+      } */
+
+      #Gooey-Container > .Gooey > img {
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+        border-radius: 10px 10px 0px 0px;
+        margin: 0px;
+      }
+
+      @media (min-width: 870px) and (max-width: 1090px) {
+        #Gooey-Container {
+          grid-template-columns: auto auto auto auto !important;
+        }
+      }
+
+      @media (min-width: 661px) and (max-width: 869px) {
+        #Gooey-Container {
+          grid-template-columns: auto auto auto !important;
+        }
+      }
+
+      @media (min-width: 450px) and (max-width: 660px) {
+        #Gooey-Container {
+          grid-template-columns: auto auto;
+        }
+      }
+
+      @media (min-width: 150px) and (max-width: 449px) {
+        #Gooey-Container {
+          grid-template-columns: auto;
+        }
+      }
+
+      .Send-Quest-Container {
+        margin-top: 100px;
+        display: grid;
+        justify-items: center;
+      }
+
+      .Send-Quest-Container > div {
+        display: grid;
+        justify-items: center;
+        grid-template-columns: auto auto auto;
+        grid-gap: 40px 80px;
+      }
+
+      .Send-Quest-Container > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 20px 5px;
+      }
+
+      .Send-Quest-Container > div > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 5px;
+      }
+
+      .transfer-button-container {
+        display: flex !important;
+        justify-content: center !important;
+        padding: 5px;
+
+        display: grid !important;
+        justify-items: center;
+        padding: 5px;
+        width: 94% !important;
+        grid-auto-columns: auto;
+        justify-content: center;
+      }
+
+      .modal-content2 > div > div {
+        display: grid;
+        justify-items: center;
+      }
+
+      .modal-content2 > div > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 15px;
+      }
+
+
+
+
+
+      /************** Modal2 ********************************************************************/
+
+      /* The Modal (background) */
+      .modal2 {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content2 {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close2 {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close2:hover,
+      .close2.hidden {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+/************** Modal2 ********************************************************************/
+
+
+
+
+
+
+
+
+
+
+      .button-82-container { 
+        margin-top: 50px;
+        display: flex;
+        justify-content: center;
+      }
+      
+      .button-82-pushable {
+        position: relative;
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        outline-offset: 4px;
+        transition: filter 250ms;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      .button-82-shadow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+        background: hsl(0deg 0% 0% / 0.25);
+        will-change: transform;
+        transform: translateY(2px);
+        transition:
+          transform
+          600ms
+          cubic-bezier(.3, .7, .4, 1);
+      }
+
+      .button-82-edge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+        background: linear-gradient(
+          to left,
+          hsl(340deg 100% 16%) 0%,
+          hsl(340deg 100% 32%) 8%,
+          hsl(340deg 100% 32%) 92%,
+          hsl(340deg 100% 16%) 100%
+        );
+      }
+
+      .button-82-front {
+        display: block;
+        position: relative;
+        padding: 12px 27px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        color: white;
+        background: hsl(345deg 100% 47%);
+        will-change: transform;
+        transform: translateY(-4px);
+        transition:
+          transform
+          600ms
+          cubic-bezier(.3, .7, .4, 1);
+      }
+
+      @media (min-width: 351px) {
+        .button-82-front {
+          font-size: 1.25rem;
+          padding: 7px 12px;
+        }
+      }
+
+      @media (min-width: 50px) and (max-width: 350px) {
+        .button-82-front {
+          font-size: 1rem !important;
+          padding: 8px 12px;
+        }
+      }
+
+      .button-82-pushable:hover {
+        filter: brightness(110%);
+        -webkit-filter: brightness(110%);
+      }
+
+      .button-82-pushable:focus:not(:focus-visible) {
+        outline: none;
+      }
+
+      .batch-quest-container > label {
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        margin: 10px;
+      }
+
+      .batch-quest-container > select {
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 10px;
+        margin: 5px;
+      }
+
+      .batch-quest-container > select > option {
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 10px;
+        margin: 5px;
+      }
+
+
+    
+
+</style>
