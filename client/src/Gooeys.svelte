@@ -503,38 +503,40 @@
 
       </div>
 
-      <span style="display: none;">{questBatchSendingCheck0.push(window.localStorage.getItem(stat.tokenId).indexOf(0))}</span>
-      <span style="display: none;">{questBatchSendingCheck1.push(window.localStorage.getItem(stat.tokenId).indexOf(1))}</span>
-      <span style="display: none;">{questBatchSendingCheck2.push(window.localStorage.getItem(stat.tokenId).indexOf(2))}</span>
-      <span style="display: none;">{questBatchSendingCheck3.push(window.localStorage.getItem(stat.tokenId).indexOf(3))}</span>
-      <span style="display: none;">{questBatchSendingCheck4.push(window.localStorage.getItem(stat.tokenId).indexOf(4))}</span>
-      <span style="display: none;">{questBatchSendingCheck5.push(window.localStorage.getItem(stat.tokenId).indexOf(5))}</span>
+        {#if (window.localStorage.getItem(stat.tokenId) != undefined) || (window.localStorage.getItem(stat.tokenId) != null)}
+          <span style="display: none;">{questBatchSendingCheck0.push(window.localStorage.getItem(stat.tokenId).indexOf(0))}</span>
+          <span style="display: none;">{questBatchSendingCheck1.push(window.localStorage.getItem(stat.tokenId).indexOf(1))}</span>
+          <span style="display: none;">{questBatchSendingCheck2.push(window.localStorage.getItem(stat.tokenId).indexOf(2))}</span>
+          <span style="display: none;">{questBatchSendingCheck3.push(window.localStorage.getItem(stat.tokenId).indexOf(3))}</span>
+          <span style="display: none;">{questBatchSendingCheck4.push(window.localStorage.getItem(stat.tokenId).indexOf(4))}</span>
+          <span style="display: none;">{questBatchSendingCheck5.push(window.localStorage.getItem(stat.tokenId).indexOf(5))}</span>
 
-      {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 9)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck0[index] == 0)}
-        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
-        <!-- <span style="display: none;">{console.log(questBatchSending)}</span> -->
-      {/if}
+          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 9)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck0[index] == 0)}
+            <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+            <!-- <span style="display: none;">{console.log(questBatchSending)}</span> -->
+          {/if}
 
-      {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 16)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck1[index] == 1)}
-        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
-      {/if}
+          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 16)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck1[index] == 1)}
+            <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+          {/if}
 
-      {#if ((gooeyLife[index].Days >= 2) || ((gooeyLife[index].Days >= 1) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck2[index] == 2)}
-        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
-      {/if}
+          {#if ((gooeyLife[index].Days >= 2) || ((gooeyLife[index].Days >= 1) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck2[index] == 2)}
+            <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+          {/if}
 
-      {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck3[index] == 3)}
-        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
-      {/if}
+          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck3[index] == 3)}
+            <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+          {/if}
 
-      {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 22))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 4)}
-        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
-      {/if}
+          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 22))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 4)}
+            <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+          {/if}
 
-      {#if (gooeyLife[index].Days >= 5) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 5)}
-        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
-        <!-- <span style="display: none;">{questBatchSending.push(userGooeys[0][parseInt(questBatchSendingCheck5.indexOf(5))])}</span> -->
-      {/if}
+          {#if (gooeyLife[index].Days >= 5) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 5)}
+            <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+            <!-- <span style="display: none;">{questBatchSending.push(userGooeys[0][parseInt(questBatchSendingCheck5.indexOf(5))])}</span> -->
+          {/if}
+        {/if}
 
       {/each}
     </div>
