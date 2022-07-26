@@ -103,7 +103,7 @@
               "Seconds" : Math.floor(soonestReturner[0] % 60)
             }
         // console.log(comeBackIn)
-        console.log(questBatchSending)
+        // console.log(questBatchSending)
       }
 
 
@@ -472,7 +472,7 @@
         </div>
         {/if} -->
 
-        {#if window.localStorage.getItem(stat.tokenId) == undefined}
+        {#if (window.localStorage.getItem(stat.tokenId) == undefined) || (window.localStorage.getItem(stat.tokenId) == null)}
         <div class="batch-quest-container">
           <label for="batch-quests">Batch Quest:</label>
           <select id="batch-quest">
@@ -487,7 +487,7 @@
         </div>
         {/if}
 
-        {#if window.localStorage.getItem(stat.tokenId) != undefined}
+        {#if (window.localStorage.getItem(stat.tokenId) != undefined) || (window.localStorage.getItem(stat.tokenId) != null)}
         <div class="batch-quest-container">
           <label for="batch-quests">Batch Quest:</label>
           <select value="{parseInt(window.localStorage.getItem(stat.tokenId))}" id="batch-quest">
