@@ -1,7 +1,7 @@
 <script>
 
 import FruitsABI from "./contracts/Fruits.json"
-import GooeysABI from "./contracts/Gooeys.json"
+import GooeyABI from "./contracts/Gooeys.json"
 
 
 
@@ -12,13 +12,17 @@ const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
 let wallet = window.localStorage.getItem("userAddress")
 $: wallet
 
+// let wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
+
 
 
 
 
 let userFruits = []
+let userGooeys = []
 let GooeyId
 let FruitId
+let Amount
 
 
 
@@ -26,9 +30,12 @@ let FruitId
 
 async function getFruitsData() {
     const contract = new window.web3.eth.Contract(FruitsABI, FRUIT_CONTRACT)
+    const contract2 = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
     const tokensAndFruits = await contract.methods.loadTokenAndFruitInfo(wallet, 14).call({ from: wallet })
+    const ids = await contract2.methods.tokensOfOwner(wallet).call({ from: wallet })
     userFruits.push(tokensAndFruits[1])
-    // console.log(userFruits)
+    userGooeys.push(ids)
+    // console.log(ids)
 }
 // getData()
 
@@ -36,36 +43,109 @@ async function getFruitsData() {
 
 
 
-let modalSwtich = "close"
+let modalSwtich4 = "close"
 
 function closeModal4(i) {
     GooeyId = parseInt(i)
     gooeyConsumeFruitId = GooeyId
     // console.log(GooeyId)
-    modalSwtich = "close"
+    modalSwtich4 = "close"
     eatFruit()
 }
 
-function closeModal() {
-    modalSwtich = "close"
+function closeModal1() {
+    modalSwtich4 = "close"
 }
 
 function showModal4(i) {
     FruitId = parseInt(i)
     fruitIdToConsume = FruitId
     // console.log(FruitId)
-    modalSwtich = "open"
+    modalSwtich4 = "open"
 }
 
+
+
+
+
+let modalSwtich5 = "close"
+
+function closeModal5(i) {
+    GooeyId = parseInt(i)
+    gooeyConsumeFruitId2 = GooeyId
+    parseInt(Amount)
+    console.log(gooeyConsumeFruitId2)
+    modalSwtich5 = "close"
+    feedXTimes()
+}
+
+function closeModal2() {
+    modalSwtich5 = "close"
+}
+
+function showModal5(i) {
+    FruitId = parseInt(i)
+    fruitIdToConsume2 = FruitId
+    console.log(fruitIdToConsume2)
+    modalSwtich5 = "open"
+}
+
+
+
+
+
 let gooeyConsumeFruitId
-let amountToConsume
+// let amountToConsume
 let fruitIdToConsume
 async function eatFruit() {
-const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
+const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 // console.log("Gooey:" + gooeyConsumeFruitId, "Amount: " + amountToConsume, "FruitID: " + fruitIdToConsume);
 
     const eat = await contract.methods.consumeFruit(gooeyConsumeFruitId, 1, fruitIdToConsume).send({ from: wallet, gasPrice : '52000000000' }) 
     console.log(eat)
+}
+
+
+
+
+
+let gooeyConsumeFruitId2
+let fruitIdToConsume2
+async function feedXTimes() {
+const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
+
+let batch = new web3.BatchRequest()
+  for (let i = 0; i < Amount; i++) {
+    batch.add(contract.methods.consumeFruit(gooeyConsumeFruitId2, 1, fruitIdToConsume2).send({ from: wallet, gasPrice : '52000000000' }))
+  }
+  batch.execute()
+  // console.log(batch)
+}
+
+
+
+
+
+function feedAll(i) {
+    FruitId = parseInt(i)
+    fruitIdToConsume3 = FruitId
+    console.log(fruitIdToConsume3)
+    feedAllGooeys()
+}
+
+let gooeyConsumeFruitId3
+let fruitIdToConsume3
+async function feedAllGooeys() {
+const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
+
+let batch = new web3.BatchRequest()
+  for (let i = 0; i < userGooeys.length; i++) {
+    gooeyConsumeFruitId3 = userGooeys[0][i]
+    // console.log(gooeyConsumeFruitId3)
+    batch.add(contract.methods.consumeFruit(gooeyConsumeFruitId3, 1, fruitIdToConsume3).send({ from: wallet, gasPrice : '52000000000' }))
+  }
+  batch.execute()
+  // console.log(batch)
 }
 
 </script>
@@ -94,11 +174,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>3,000 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="0" on:click="{() => showModal4(0)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="0" on:click="{() => showModal4(0)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="0" on:click="{() => showModal5(0)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="0" on:click="{() => feedAll(0)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-0">
             <p>Current Amount</p>
@@ -122,11 +206,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>4,000 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="1" on:click="{() => showModal4(1)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="1" on:click="{() => showModal4(1)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="1" on:click="{() => showModal5(1)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="1" on:click="{() => feedAll(1)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-1">
             <p>Current Amount</p>
@@ -150,11 +238,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>4,800 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="2" on:click="{() => showModal4(2)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="2" on:click="{() => showModal4(2)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="2" on:click="{() => showModal5(2)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="2" on:click="{() => feedAll(2)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-2">
             <p>Current Amount</p>
@@ -178,11 +270,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>7,300 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="3" on:click="{() => showModal4(3)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="3" on:click="{() => showModal4(3)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="3" on:click="{() => showModal5(3)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="3" on:click="{() => feedAll(3)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-3">
             <p>Current Amount</p>
@@ -206,11 +302,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>10,000 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="4" on:click="{() => showModal4(4)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="4" on:click="{() => showModal4(4)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="4" on:click="{() => showModal5(4)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="4" on:click="{() => feedAll(4)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-4">
             <p>Current Amount</p>
@@ -234,11 +334,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>20,000 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="5" on:click="{() => showModal4(5)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="5" on:click="{() => showModal4(5)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="5" on:click="{() => showModal5(5)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="5" on:click="{() => feedAll(5)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-5">
             <p>Current Amount</p>
@@ -262,11 +366,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>27,500 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="6" on:click="{() => showModal4(6)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="6" on:click="{() => showModal4(6)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="6" on:click="{() => showModal5(6)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="6" on:click="{() => feedAll(6)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-6">
             <p>Current Amount</p>
@@ -290,11 +398,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>45,000 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="7" on:click="{() => showModal4(7)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="7" on:click="{() => showModal4(7)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="7" on:click="{() => showModal5(7)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="7" on:click="{() => feedAll(7)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-7">
             <p>Current Amount</p>
@@ -318,11 +430,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>54,000 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="8" on:click="{() => showModal4(8)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="8" on:click="{() => showModal4(8)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="8" on:click="{() => showModal5(8)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="8" on:click="{() => feedAll(8)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-8">
             <p>Current Amount</p>
@@ -346,11 +462,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>800,000 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="9" on:click="{() => showModal4(9)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="9" on:click="{() => showModal4(9)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="9" on:click="{() => showModal5(9)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="9" on:click="{() => feedAll(9)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-9">
             <p>Current Amount</p>
@@ -374,11 +494,15 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
             <p>1,550,000 $GOO</p>
           </div>
           <div>
-            <!-- <button id="0" onclick="buyFruit()">Buy</button> -->
-            <button id="10" on:click="{() => showModal4(10)}">Eat</button>
-            <!-- <div>
-              <button id="0" onclick="showModal5(); getFruitIdToTransfer(this)">Transfer</button>
+            <div style="display: grid; justify-items: center; margin-top: 10px;">
+              <button id="10" on:click="{() => showModal4(10)}">Eat Fruit</button>
+            </div>
+            <!-- <div style="display: grid; justify-items: center;">
+              <button id="10" on:click="{() => showModal5(10)}">Eat X Times</button>
             </div> -->
+            <div style="display: grid; justify-items: center;">
+              <button id="10" on:click="{() => feedAll(10)}">Feed All</button>
+            </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-10">
             <p>Current Amount</p>
@@ -389,9 +513,9 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
       </div>
       {/await}
 
-    <div id="modal-container4" class="{"modal4 " + modalSwtich}">
+    <div id="modal-container4" class="{"modal4 " + modalSwtich4}">
         <div class="modal-content4">
-          <span on:click="{() => closeModal()}" class="close4">x</span>
+          <span on:click="{() => closeModal1()}" class="close4">x</span>
 
           <div>
             
@@ -407,6 +531,28 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
           
         </div>
     </div>
+
+    <div id="modal-container5" class="{"modal5 " + modalSwtich5}">
+      <div class="modal-content5">
+        <span on:click="{() => closeModal2()}" class="close5">x</span>
+
+        <div>
+          
+          <div>
+            <div>
+              <label for="eat-fruit-id">Gooey ID</label>
+              <input id="eat-fruit-id" type="number" placeholder="Gooey ID" bind:value="{GooeyId}">
+              <label for="fruit-amount">Fruit Amount</label>
+              <input id="fruit-amount" type="number" placeholder="Amount" bind:value="{Amount}">
+              <button on:click="{() => closeModal5(GooeyId)}">Confirm</button>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+    </div>
+
 </section> 
 
 
@@ -620,5 +766,72 @@ const contract = new window.web3.eth.Contract(GooeysABI, GOOEY_CONTRACT)
       }
 
 /************** Modal4 ********************************************************************/
+
+
+/************** Modal5 ********************************************************************/
+
+      /* The Modal (background) */
+      .modal5 {
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content5 {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close5 {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close5:hover,
+      .close5.hidden {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+      .modal-content5 > div > div {
+        display: grid;
+        justify-items: center;
+      }
+
+      .modal-content5 > div > div > div {
+        display: grid;
+        justify-items: center;
+        grid-gap: 15px;
+      }
+
+      .modal-content5 > div > div > div > input {
+        margin: 0px;
+      }
+
+      .modal-content5 > div > div > div > button {
+        margin-top: 25px;
+      }
+
+/************** Modal5 ********************************************************************/
 
 </style>

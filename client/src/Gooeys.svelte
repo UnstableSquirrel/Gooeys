@@ -11,6 +11,8 @@
     const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
     let wallet = window.localStorage.getItem("userAddress")
     $: wallet
+
+    // let wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
     
 
 
@@ -25,6 +27,13 @@
 
     let checkOnQuest = []
     let questBatchCompletion = []
+
+    let questBatchSendingCheck0 = []
+    let questBatchSendingCheck1 = []
+    let questBatchSendingCheck2 = []
+    let questBatchSendingCheck3 = []
+    let questBatchSendingCheck4 = []
+    let questBatchSendingCheck5 = []
     let questBatchSending = []
 
     let soonestReturner = []
@@ -86,7 +95,6 @@
         allStats = allStats
         // window.localStorage.deleteItem("selectedQuests")
         // console.log(questBatchCompletion)
-        // console.log(questBatchSending)
         soonestReturner.sort((a, b) => a - b)
         comeBackIn = {
               "Days" : Math.floor(soonestReturner[0] / (3600 * 24)), 
@@ -95,6 +103,7 @@
               "Seconds" : Math.floor(soonestReturner[0] % 60)
             }
         // console.log(comeBackIn)
+        console.log(questBatchSending)
       }
 
 
@@ -493,9 +502,40 @@
         {/if}
 
       </div>
-      {#if (gooeyLife[index].Days >= 0) && (gooeyLife[index].Hours >= 9) && (gooeyLife[index].Minutes >= 0) && (checkOnQuest[index] == 0)}
-        <span style="display: none;">{questBatchSending.push(userGooeys[0][index])}</span>
+
+      <span style="display: none;">{questBatchSendingCheck0.push(window.localStorage.getItem(stat.tokenId).indexOf(0))}</span>
+      <span style="display: none;">{questBatchSendingCheck1.push(window.localStorage.getItem(stat.tokenId).indexOf(1))}</span>
+      <span style="display: none;">{questBatchSendingCheck2.push(window.localStorage.getItem(stat.tokenId).indexOf(2))}</span>
+      <span style="display: none;">{questBatchSendingCheck3.push(window.localStorage.getItem(stat.tokenId).indexOf(3))}</span>
+      <span style="display: none;">{questBatchSendingCheck4.push(window.localStorage.getItem(stat.tokenId).indexOf(4))}</span>
+      <span style="display: none;">{questBatchSendingCheck5.push(window.localStorage.getItem(stat.tokenId).indexOf(5))}</span>
+
+      {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 9)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck0[index] == 0)}
+        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+        <!-- <span style="display: none;">{console.log(questBatchSending)}</span> -->
       {/if}
+
+      {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 16)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck1[index] == 1)}
+        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+      {/if}
+
+      {#if ((gooeyLife[index].Days >= 2) || ((gooeyLife[index].Days >= 1) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck2[index] == 2)}
+        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+      {/if}
+
+      {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck3[index] == 3)}
+        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+      {/if}
+
+      {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 22))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 4)}
+        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+      {/if}
+
+      {#if (gooeyLife[index].Days >= 5) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 5)}
+        <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
+        <!-- <span style="display: none;">{questBatchSending.push(userGooeys[0][parseInt(questBatchSendingCheck5.indexOf(5))])}</span> -->
+      {/if}
+
       {/each}
     </div>
 
@@ -503,12 +543,12 @@
 
 
     {#if questBatchCompletion.length == 0}
-    <div style="margin: 50px 0px 25px 0px;">
+    <div style="margin: 70px 0px 25px 0px;">
       <button class="disabled" disabled="true">Complete All Quests</button>
     </div>
     {/if}
     {#if questBatchCompletion.length > 0}
-    <div>
+    <div style="margin: 70px 0px 25px 0px;">
       <button on:click="{completeAllQuests}">Complete All Quests</button>
     </div>
     {/if}
@@ -519,7 +559,7 @@
     </div>
     {/if}
     {#if questBatchSending.length > 0}
-    <div>
+    <div style="margin: 0px 0px 50px 0px;">
       <button on:click="{sendAllToQuests}">Send All To Quests</button>
     </div>
     {/if}
@@ -711,7 +751,6 @@
     #Gooey-Container {
       display: grid;
       grid-template-columns: auto auto auto auto auto;
-      grid-gap: 10px;
       border: 5px solid rgba(49, 33, 63, 0.5);
       border-radius: 10px;
       background-color: rgba(173, 104, 236, 0.5);
@@ -812,7 +851,6 @@
       .Quests-Container {
         display: grid;
         grid-template-columns: auto auto auto;
-        grid-gap: 10px;
         justify-items: center;
         padding: 10px;
       }
@@ -903,6 +941,7 @@
         display: grid;
         justify-items: center;
         max-width: 200px;
+        margin: 10px;
       }
 
       .Gooey > div {
@@ -996,25 +1035,25 @@
         margin: 0px;
       }
 
-      @media (min-width: 870px) and (max-width: 1090px) {
+      @media (min-width: 945px) and (max-width: 1145px) {
         #Gooey-Container {
           grid-template-columns: auto auto auto auto !important;
         }
       }
 
-      @media (min-width: 661px) and (max-width: 869px) {
+      @media (min-width: 701px) and (max-width: 944px) {
         #Gooey-Container {
           grid-template-columns: auto auto auto !important;
         }
       }
 
-      @media (min-width: 450px) and (max-width: 660px) {
+      @media (min-width: 490px) and (max-width: 700px) {
         #Gooey-Container {
           grid-template-columns: auto auto;
         }
       }
 
-      @media (min-width: 150px) and (max-width: 449px) {
+      @media (min-width: 150px) and (max-width: 489px) {
         #Gooey-Container {
           grid-template-columns: auto;
         }

@@ -288,7 +288,7 @@
         margin: 0px 0px 75px 0px;
       }
 
-      @media (min-width: 150px) and (max-width: 449px) {
+      @media (min-width: 150px) and (max-width: 500px) {
 
         header {
           display: grid;
@@ -311,6 +311,10 @@
         }
 
         .login-container {
+          padding: 0px;
+        }
+
+        .logout-container {
           padding: 0px;
         }
       }
