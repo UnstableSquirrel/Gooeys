@@ -3,6 +3,9 @@
   import FruitsABI from "./contracts/Fruits.json"
   import Gooeys from "./Gooeys.svelte"
   import Fruits from "./Fruits.svelte"
+  // import { gas } from "./singleStore.js"
+  // import { writable } from "svelte/store"
+  // import { browser } from "$app/env"
 
 
 
@@ -14,6 +17,23 @@
 
   window.userAddress = null
   let wallet
+  let gas = '200000000000'
+  
+  // $: if($gas  === null || $gas === undefined) {
+  //     $amount = 0
+  //   }
+  //  }
+
+  // if ((window.localStorage.getItem("gas") === null) || (window.localStorage.getItem("gas") === undefined)) {
+  //   gas = '52000000000'
+  //   window.localStorage.setItem("gas", gas)
+  //   store.subscribe(data => {
+  //     addedGooeys = data
+  //   })
+  // }
+
+  // let gasText = gas.toString()
+
   // $: if (wallet != window.userAddress) {
   //     wallet = window.userAddress
   // }
@@ -50,7 +70,7 @@
     return `${address.substr(0, 5)}...${address.substr(
       address.length - 5,
       address.length
-    )}`;
+    )}`
   }
 
   function logout() {
@@ -141,6 +161,12 @@
           <p>GOO:</p>
           <p>{goo}</p>
         </div>
+        <!-- <div id="gas">
+          <p>Gas: </p>
+          <p>{parseInt(gas.toString().substring(0, gas.toString().length - 9))}</p>
+          <label style="display:flex; justify-content:center; text-align:center; margin:0px !important; padding:0px !important; font-size:25px;" for="Amount">Gas: </label>
+          <input style="width: 120px;" type="number" on:focus="{event => selectContent(event)}" name="number" bind:value="{$gas}">
+        </div> -->
       </div>
   
       <div class="logo-container">

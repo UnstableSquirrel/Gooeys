@@ -9,6 +9,7 @@
 
 
     const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
+    let gas = '200000000000'
     let wallet = window.localStorage.getItem("userAddress")
     $: wallet
 
@@ -245,7 +246,7 @@
       async function sendQuest() {
         const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 
-        const questStart = await contract.methods.startQuest(startQuestGooeyId, startQuestType).send({ from: wallet, gasPrice : '52000000000'})
+        const questStart = await contract.methods.startQuest(startQuestGooeyId, startQuestType).send({ from: wallet, gasPrice : gas })
         console.log(questStart)
       }
 
@@ -257,7 +258,7 @@
       async function completeQuest() {
         const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
 
-        const questReturn = await contract.methods.completeQuest(returnQuestGooeyId).send({ from: wallet, gasPrice : '52000000000' })
+        const questReturn = await contract.methods.completeQuest(returnQuestGooeyId).send({ from: wallet, gasPrice : gas })
         // const info = await contract.methods.getCurrentQuestInfoABIv1(returnQuestGooeyId).call({ from: wallet, gasPrice : '52000000000' })
         // console.log(info)
         // const gwei = await contract.methods.maximumCallGwei().send({ from: wallet })
@@ -273,7 +274,7 @@
         
         let batch = new web3.BatchRequest()
         for (let i = 0; i < questBatchCompletion.length; i++) {
-          batch.add(contract.methods.completeQuest(questBatchCompletion[i]).send({ from: wallet, gasPrice : '52000000000' }))
+          batch.add(contract.methods.completeQuest(questBatchCompletion[i]).send({ from: wallet, gasPrice : gas }))
         }
         batch.execute()
         // console.log(batch)
@@ -284,7 +285,7 @@
         
         let batch = new web3.BatchRequest()
         for (let i = 0; i < questBatchSending.length; i++) {
-          batch.add(contract.methods.startQuest(questBatchSending[i], parseInt(window.localStorage.getItem(questBatchSending[i]))).send({ from: wallet, gasPrice : '52000000000' }))
+          batch.add(contract.methods.startQuest(questBatchSending[i], parseInt(window.localStorage.getItem(questBatchSending[i]))).send({ from: wallet, gasPrice : gas }))
         }
         batch.execute()
         // console.log(batch)
@@ -297,7 +298,7 @@
       async function cancelQuest() {
         const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 
-        const questCancel = await contract.methods.cancelQuest(cancelQuestGooeyId).send({ from: wallet, gasPrice : '52000000000' })
+        const questCancel = await contract.methods.cancelQuest(cancelQuestGooeyId).send({ from: wallet, gasPrice : gas })
         console.log(questCancel)
       }
 
@@ -314,7 +315,7 @@
       async function transferGooey() {
         const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 
-        const transfer = await contract.methods.safeTransferFrom(wallet, transferTo, transferTokenId).send({ from: wallet, gasPrice : '52000000000' })
+        const transfer = await contract.methods.safeTransferFrom(wallet, transferTo, transferTokenId).send({ from: wallet, gasPrice : gas })
         console.log(transfer);
       }
 
@@ -510,29 +511,30 @@
           <span style="display: none;">{questBatchSendingCheck3.push(window.localStorage.getItem(stat.tokenId).indexOf(3))}</span>
           <span style="display: none;">{questBatchSendingCheck4.push(window.localStorage.getItem(stat.tokenId).indexOf(4))}</span>
           <span style="display: none;">{questBatchSendingCheck5.push(window.localStorage.getItem(stat.tokenId).indexOf(5))}</span>
+          <!-- <span style="display: none;">{console.log(questBatchSendingCheck2)}</span> -->
 
           {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 9)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck0[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
             <!-- <span style="display: none;">{console.log(questBatchSending)}</span> -->
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 16)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck1[index] == 1)}
+          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 16)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck1[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 2) || ((gooeyLife[index].Days >= 1) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck2[index] == 2)}
+          {#if ((gooeyLife[index].Days >= 2) || ((gooeyLife[index].Days >= 1) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck2[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck3[index] == 3)}
+          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck3[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 22))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 4)}
+          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 22))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
-          {#if (gooeyLife[index].Days >= 5) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 5)}
+          {#if (gooeyLife[index].Days >= 5) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
             <!-- <span style="display: none;">{questBatchSending.push(userGooeys[0][parseInt(questBatchSendingCheck5.indexOf(5))])}</span> -->
           {/if}

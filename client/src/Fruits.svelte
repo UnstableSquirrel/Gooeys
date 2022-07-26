@@ -11,6 +11,7 @@ const FRUIT_CONTRACT = "0x2375874eb409095efa6090bf7085ae3922543c72"
 const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
 let wallet = window.localStorage.getItem("userAddress")
 $: wallet
+let gas = '200000000000'
 
 // let wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
 
@@ -101,7 +102,7 @@ async function eatFruit() {
 const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 // console.log("Gooey:" + gooeyConsumeFruitId, "Amount: " + amountToConsume, "FruitID: " + fruitIdToConsume);
 
-    const eat = await contract.methods.consumeFruit(gooeyConsumeFruitId, 1, fruitIdToConsume).send({ from: wallet, gasPrice : '52000000000' }) 
+    const eat = await contract.methods.consumeFruit(gooeyConsumeFruitId, 1, fruitIdToConsume).send({ from: wallet, gasPrice : gas }) 
     console.log(eat)
 }
 
@@ -116,7 +117,7 @@ const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
 
 let batch = new web3.BatchRequest()
   for (let i = 0; i < Amount; i++) {
-    batch.add(contract.methods.consumeFruit(gooeyConsumeFruitId2, 1, fruitIdToConsume2).send({ from: wallet, gasPrice : '52000000000' }))
+    batch.add(contract.methods.consumeFruit(gooeyConsumeFruitId2, 1, fruitIdToConsume2).send({ from: wallet, gasPrice : gas }))
   }
   batch.execute()
   // console.log(batch)
@@ -139,10 +140,10 @@ async function feedAllGooeys() {
 const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
 
 let batch = new web3.BatchRequest()
-  for (let i = 0; i < userGooeys.length; i++) {
-    gooeyConsumeFruitId3 = userGooeys[0][i]
+  for (let i = 0; i < userGooeys[0].length; i++) {
+    // gooeyConsumeFruitId3 = userGooeys[0][i]
     // console.log(gooeyConsumeFruitId3)
-    batch.add(contract.methods.consumeFruit(gooeyConsumeFruitId3, 1, fruitIdToConsume3).send({ from: wallet, gasPrice : '52000000000' }))
+    batch.add(contract.methods.consumeFruit(userGooeys[0][i], 1, fruitIdToConsume3).send({ from: wallet, gasPrice : gas }))
   }
   batch.execute()
   // console.log(batch)
@@ -156,6 +157,7 @@ let batch = new web3.BatchRequest()
 
       {#await getFruitsData()}
       {:then}
+<!-- <span style="display: none;">{console.log(userGooeys[0].length)}</span> -->
       <div class="Fruits-Container">
 
         <div class="Fruit">
