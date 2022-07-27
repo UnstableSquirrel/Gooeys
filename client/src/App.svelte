@@ -5,38 +5,37 @@
   import Fruits from "./Fruits.svelte"
   // import { gas } from "./singleStore.js"
   // import { writable } from "svelte/store"
-  // import { browser } from "$app/env"
 
 
 
 
-
-
-
-
-
+  
   window.userAddress = null
   let wallet
-  let gas = '200000000000'
-  
-  // $: if($gas  === null || $gas === undefined) {
-  //     $amount = 0
-  //   }
-  //  }
-
-  // if ((window.localStorage.getItem("gas") === null) || (window.localStorage.getItem("gas") === undefined)) {
-  //   gas = '52000000000'
-  //   window.localStorage.setItem("gas", gas)
-  //   store.subscribe(data => {
-  //     addedGooeys = data
-  //   })
-  // }
-
-  // let gasText = gas.toString()
-
   // $: if (wallet != window.userAddress) {
   //     wallet = window.userAddress
   // }
+
+
+
+
+
+  // let gas = "50000000000".substring(0, "50000000000".length - 9)
+  let gas
+
+  $:  change = function changeGas() {
+        gas = window.localStorage.setItem("gas", gas + "000000000")
+        gas = window.localStorage.getItem("gas").substring(0, window.localStorage.getItem("gas").length - 9)
+      }
+
+  $:  if (window.localStorage.getItem("gas") === null || window.localStorage.getItem("gas") === undefined) {
+        gas = window.localStorage.setItem("gas", "50000000000")
+        gas = window.localStorage.getItem("gas").substring(0, window.localStorage.getItem("gas").length - 9)
+      }
+
+
+
+
 
   const FRUIT_CONTRACT = "0x2375874eb409095efa6090bf7085ae3922543c72"
   let tokens = []
@@ -61,7 +60,8 @@
     }
     window.userAddress = window.localStorage.getItem("userAddress")
     wallet = window.userAddress
-  };
+    gas = window.localStorage.getItem("gas").substring(0, window.localStorage.getItem("gas").length - 9)
+  }
 
   function truncateAddress(address) {
     if (!address) {
@@ -118,6 +118,12 @@
 
 
 
+  let gasModal = "close"
+
+
+
+
+
   async function getWalletInfo() {
       const web3 = new Web3(window.ethereum)
       const contract = new web3.eth.Contract(FruitsABI, FRUIT_CONTRACT)
@@ -161,12 +167,6 @@
           <p>GOO:</p>
           <p>{goo}</p>
         </div>
-        <!-- <div id="gas">
-          <p>Gas: </p>
-          <p>{parseInt(gas.toString().substring(0, gas.toString().length - 9))}</p>
-          <label style="display:flex; justify-content:center; text-align:center; margin:0px !important; padding:0px !important; font-size:25px;" for="Amount">Gas: </label>
-          <input style="width: 120px;" type="number" on:focus="{event => selectContent(event)}" name="number" bind:value="{$gas}">
-        </div> -->
       </div>
   
       <div class="logo-container">
@@ -181,7 +181,12 @@
         <button id="logoutButton" on:click="{logout}">
           Logout
         </button>
-      </div>
+        <div class="gas-container">
+          <!-- <p>Current Gas: </p> -->
+          <p>{gas} Gwei</p>
+          <button  on:click="{() => gasModal = "open"}">Set Gas</button>
+        </div>
+      </div> 
       {/if}
       {#if wallet == null }
       <div class="login-container">
@@ -198,9 +203,30 @@
     <Fruits />
   {/if}
 
+  <div id="modal-container" class="{"modal " + gasModal}">
+    <div class="modal-content">
+        <span on:click="{() => gasModal = "close"}" class="close-button">×</span>
+
+        <div class="gas-modal">
+          <label style="display:flex; justify-content:center; text-align:center; margin:0px !important; padding:0px !important; font-size:25px;" for="Amount">New Gas: </label>
+          <input style="width: 120px;" type="number" name="gas" on:change="{change}" bind:value="{gas}">
+          <button on:click="{() => gasModal = "close"}">good</button>
+        </div>
+
+    </div>
+  </div>
+
 </main>
 
 <style>
+
+      .close {
+        display: none;
+      }
+
+      .open {
+        display: block !important;
+      }
 
       button {
         height:40px;
@@ -311,8 +337,81 @@
       }
 
       .logout-container > button {
-        margin: 0px 0px 75px 0px;
+        margin: 0px 0px 20px 0px;
       }
+
+      .gas-container {
+        display: grid;
+        justify-items: center;
+        margin: 0px;
+        padding: 0px;
+      }
+
+      .gas-container > p {
+        margin: 0px;
+        padding: 0px;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;
+      }
+
+/************** Modal ********************************************************************/
+
+      /* The Modal (background) */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 50px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content {
+        background-color: #75f8dc;
+        margin: auto;
+        padding: 10px 15px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 20px;
+      }
+
+      /* The Close Button */
+      .close-button {
+        color: #000000;
+        float: right;
+        font-size: 30px;
+        font-weight: 700;
+        width: 35px;
+        height: 33px;
+        text-align: center;
+        border: 2px solid black;
+        background-color: red;
+      }
+
+      .close-button:hover,
+      .close-button:focus {
+        background-color: rgb(223, 0, 0);
+        cursor: pointer;
+      }
+
+      .gas-modal {
+        display: grid;
+        justify-items: center;
+      }
+
+      .gas-modal > input {
+        margin-top: 10px;
+      }
+
+/************** Modal ********************************************************************/
 
       @media (min-width: 150px) and (max-width: 500px) {
 

@@ -9,7 +9,7 @@
 
 
     const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
-    let gas = '200000000000'
+    let gas = window.localStorage.getItem("gas")
     let wallet = window.localStorage.getItem("userAddress")
     $: wallet
 
