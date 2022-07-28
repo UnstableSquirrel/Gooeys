@@ -583,7 +583,7 @@
         </div>
         {/if}
 
-        {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
+        {#if (questTime[index].Days > 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
         <div style="background-color: rgb(151, 255, 125); justify-content: center; height: 34px;">
           <p style="justify-content: center; font-size: 17px; font-weight: 700;"><span style="display: none; width: fit-content;">{questBatchCompletion.push(userGooeys[0][index])}</span>Quest Completed</p>
         </div>
@@ -594,7 +594,7 @@
           <button class="disabled" disabled="true">Send to Quest</button>
           {/if}
           {#if ((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] == 0)) 
-          && ((gooeyLife[index].Days != 0) && (gooeyLife[index].Hours != 0) && (gooeyLife[index].Minutes != 0) && (gooeyLife[index].Seconds != 0)) }
+          || ((gooeyLife[index].Days != 0) && (gooeyLife[index].Hours != 0) && (gooeyLife[index].Minutes != 0) && (gooeyLife[index].Seconds != 0) && (checkOnQuest[index] == 0)) }
           <button on:mouseup="{openModal1}" on:click="{getSendQuestId(stat.tokenId)}">Send to Quest</button>
           {/if}
 
@@ -2116,6 +2116,7 @@
         text-align: center;
         border: 2px solid black;
         background-color: red;
+        z-index: 5;
       }
 
       .close4:hover,
@@ -2183,6 +2184,7 @@
         text-align: center;
         border: 2px solid black;
         background-color: red;
+        z-index: 5;
       }
 
       .close5:hover,
