@@ -3,6 +3,7 @@
   import FruitsABI from "./contracts/Fruits.json"
   import Gooeys from "./Gooeys.svelte"
   import Fruits from "./Fruits.svelte"
+  // import { onMount } from 'svelte';
   // import { gas } from "./singleStore.js"
   // import { writable } from "svelte/store"
 
@@ -200,7 +201,6 @@
 
   {#if wallet != null }
     <Gooeys />
-    <Fruits />
   {/if}
 
   <div id="modal-container" class="{"modal " + gasModal}">

@@ -2,9 +2,10 @@
 
 import FruitsABI from "./contracts/Fruits.json"
 import GooeyABI from "./contracts/Gooeys.json"
+import Gooeys from "./Gooeys.svelte"
 
-
-
+// Gooeys.feedForQuest0 = Gooeys.feedForQuest0
+// $: Gooeys.feedForQuest0
 
 
 const FRUIT_CONTRACT = "0x2375874eb409095efa6090bf7085ae3922543c72"
@@ -130,8 +131,8 @@ let batch = new web3.BatchRequest()
 function feedAll(i) {
     FruitId = parseInt(i)
     fruitIdToConsume3 = FruitId
-    console.log(fruitIdToConsume3)
-    feedAllGooeys()
+    console.log(feedForQuest0)
+    // feedAllGooeys()
 }
 
 let gooeyConsumeFruitId3
@@ -140,10 +141,10 @@ async function feedAllGooeys() {
 const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
 
 let batch = new web3.BatchRequest()
-  for (let i = 0; i < userGooeys[0].length; i++) {
+  for (let i = 0; i < feedForQuest0.length; i++) {
     // gooeyConsumeFruitId3 = userGooeys[0][i]
     // console.log(gooeyConsumeFruitId3)
-    batch.add(contract.methods.consumeFruit(userGooeys[0][i], 1, fruitIdToConsume3).send({ from: wallet, gasPrice : gas }))
+    batch.add(contract.methods.consumeFruit(feedForQuest0[i], 1, fruitIdToConsume3).send({ from: wallet, gasPrice : gas }))
   }
   batch.execute()
   // console.log(batch)
@@ -155,7 +156,7 @@ let batch = new web3.BatchRequest()
 
     <section id="Fruits"> 
 
-      {#await getFruitsData()}
+      {#await getFruitsData() }
       {:then}
 <!-- <span style="display: none;">{console.log(userGooeys[0].length)}</span> -->
       <div class="Fruits-Container">
@@ -183,7 +184,7 @@ let batch = new web3.BatchRequest()
               <button id="0" on:click="{() => showModal5(0)}">Eat X Times</button>
             </div> -->
             <div style="display: grid; justify-items: center;">
-              <button id="0" on:click="{() => feedAll(0)}">Feed All</button>
+              <button id="0"  on:click="{() => feedAll(0)}">Feed All</button>
             </div>
           </div>
           <div class="fruit-amount" id="fruit-amount-0">
