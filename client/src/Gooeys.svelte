@@ -1327,7 +1327,7 @@
             <div>
               <div>
                 <h2>Who to feed</h2>
-                <div style="display: grid; grid-template-columns: auto auto; grid-gap: 10px;">
+                <div class="feed-classes" style="display: grid; grid-template-columns: auto auto; grid-gap: 10px;">
                   <div style="text-align: center; display: grid; max-width: 100px; border: solid 2px black; background-color:aquamarine; padding: 5px 10px; border-radius: 15px;">
                     <p style="font-weight: 700;">All Commons Below 9H</p>
                     <button style="width: 100px; height: 30px; font-size: 15px;" on:click="{() => closeModal5(feedForQuest0)}">Confirm</button>
@@ -1983,6 +1983,34 @@
         .Fruits-Container {
           grid-template-columns: auto;
           grid-gap: 35px 0px;
+        }
+
+        .feed-classes > div {
+          max-width: 80px;
+        }
+
+        .feed-classes > div > p {
+          font-size: 12px;
+          font-weight: bold;
+        }
+
+        .feed-classes > div > button {
+          width: 50px;
+          height: 20px;
+          font-size: 12px !important;
+          font-weight: bold;
+          padding: 2px 5px;
+        }
+
+      }
+
+      @media (min-width: 120px) and (max-width: 300px) {
+        .feed-classes {
+          grid-template-columns: auto !important;
+        }
+
+        .modal-content5 > div > div {
+          margin: 35px 0px 40px 0px; 
         }
       }
 
