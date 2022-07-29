@@ -13,10 +13,10 @@
     const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
     const FRUIT_CONTRACT = "0x2375874eb409095efa6090bf7085ae3922543c72"
     let gas = window.localStorage.getItem("gas")
-    let wallet = window.localStorage.getItem("userAddress")
-    $: wallet
+    // let wallet = window.localStorage.getItem("userAddress")
+    // $: wallet
 
-    // let wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
+    let wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
     
 
 
@@ -593,8 +593,7 @@
           {#if (checkOnQuest[index] > 0) || ((gooeyLife[index].Days == 0) && (gooeyLife[index].Hours == 0) && (gooeyLife[index].Minutes == 0) && (gooeyLife[index].Seconds == 0))}
           <button class="disabled" disabled="true">Send to Quest</button>
           {/if}
-          {#if ((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] == 0)) 
-          || ((gooeyLife[index].Days != 0) && (gooeyLife[index].Hours != 0) && (gooeyLife[index].Minutes != 0) && (gooeyLife[index].Seconds != 0) && (checkOnQuest[index] == 0)) }
+          {#if ((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] == 0)) || ((gooeyLife[index].Days != 0) && (gooeyLife[index].Hours != 0) && (gooeyLife[index].Minutes != 0) && (gooeyLife[index].Seconds != 0) && (checkOnQuest[index] == 0)) }
           <button on:mouseup="{openModal1}" on:click="{getSendQuestId(stat.tokenId)}">Send to Quest</button>
           {/if}
 
@@ -1622,8 +1621,12 @@
       .Gooey > div:nth-child(6) {
         border-top: none;
         /* border-bottom: none; */
-        grid-template-columns: auto auto auto auto auto;
+        grid-template-columns: auto;
         text-align: center; 
+        display: grid;
+        padding: 10px 0px 5px 0px;
+        width: 99%;
+        justify-items: center;
       }
 
       .Gooey > div:nth-child(7) {
@@ -1633,12 +1636,13 @@
         justify-items: center;
         padding: 5px 0px;
         grid-gap: 5px;
+        width: 99% !important;
       }
 
       .Gooey > div:nth-child(7) > button {
-        width: 170px;
+        width: 130px;
         height: 35px;
-        font-size: 13px;
+        font-size: 17px;
         font-weight: 700;
         margin: 5px 0px;
       }
@@ -1650,6 +1654,12 @@
         padding: 0px 10px;
         margin: 5px 0px;
         width: 150%;
+      } */
+/* 
+      .quest-button-area {
+        display: grid !important;
+        padding: 5px 0px !important;
+        max-width: 99% !important;
       } */
 
       #Gooey-Container > .Gooey > img {
