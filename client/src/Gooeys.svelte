@@ -583,17 +583,17 @@
         </div>
         {/if}
 
-        {#if (questTime[index].Days > 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
+        {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
         <div style="background-color: rgb(151, 255, 125); justify-content: center; height: 34px;">
           <p style="justify-content: center; font-size: 17px; font-weight: 700;"><span style="display: none; width: fit-content;">{questBatchCompletion.push(userGooeys[0][index])}</span>Quest Completed</p>
         </div>
         {/if}
 
         <div class="quest-button-area">
-          {#if (checkOnQuest[index] > 0) || ((gooeyLife[index].Days == 0) && (gooeyLife[index].Hours == 0) && (gooeyLife[index].Minutes == 0) && (gooeyLife[index].Seconds == 0))}
+          {#if (checkOnQuest[index] > 0)}
           <button class="disabled" disabled="true">Send to Quest</button>
           {/if}
-          {#if ((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] == 0)) || ((gooeyLife[index].Days != 0) && (gooeyLife[index].Hours != 0) && (gooeyLife[index].Minutes != 0) && (gooeyLife[index].Seconds != 0) && (checkOnQuest[index] == 0)) }
+          {#if ((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] == 0))}
           <button on:mouseup="{openModal1}" on:click="{getSendQuestId(stat.tokenId)}">Send to Quest</button>
           {/if}
 
@@ -1605,6 +1605,7 @@
         border-top: none;
         grid-template-columns: auto auto auto auto auto;
         text-align: center; 
+        height: 34px !important;
       }
 
       .Gooey > div:nth-child(6) > p:nth-child(1) {
@@ -1621,10 +1622,9 @@
       .Gooey > div:nth-child(6) {
         border-top: none;
         /* border-bottom: none; */
-        grid-template-columns: auto;
+        grid-template-columns: auto auto auto auto auto;
         text-align: center; 
         display: grid;
-        padding: 10px 0px 5px 0px;
         width: 99%;
         justify-items: center;
       }
@@ -1640,9 +1640,9 @@
       }
 
       .Gooey > div:nth-child(7) > button {
-        width: 130px;
+        width: 160px;
         height: 35px;
-        font-size: 17px;
+        font-size: 13px;
         font-weight: 700;
         margin: 5px 0px;
       }
