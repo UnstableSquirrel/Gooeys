@@ -10,8 +10,8 @@
 
 
 
-    const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
-    const FRUIT_CONTRACT = "0x2375874eb409095efa6090bf7085ae3922543c72"
+    const GOOEY_CONTRACT = "0x3154D38F35febE08FD0afdc6c3A1B833a49F69de"
+    const FRUIT_CONTRACT = "0x1e271BA89e811fa8145683652000414d15e38d22"
     let gas = window.localStorage.getItem("gas")
     let wallet = window.localStorage.getItem("userAddress")
     $: wallet
@@ -193,11 +193,11 @@
         let totalStats = parseInt(checkId[0][0].hp) + parseInt(checkId[0][0].atk) + parseInt(checkId[0][0].def) + parseInt(checkId[0][0].spd)
         console.log(totalStats)
 
-        questChance1 = ((2000 - (1500 - totalStats)) / 2000 * 100).toFixed(2)
+        questChance1 = ((2000 - (1200 - totalStats)) / 2000 * 100).toFixed(2)
         if (questChance1 < 0 ) { questChance1 = "0"}
         if (questChance1 > 100 ) { questChance1 = "100"}
 
-        questChance2 = ((2000 - (2300 - totalStats)) / 2000 * 100).toFixed(2)
+        questChance2 = ((2000 - (2000 - totalStats)) / 2000 * 100).toFixed(2)
         if (questChance2 < 0 ) { questChance2 = "0"}
         if (questChance2 > 100 ) { questChance1 = "100"}
 
@@ -790,7 +790,7 @@
                 </div>
                 <div>
                   <p>Quest Difficulty</p>
-                  <p>1500</p>
+                  <p>1200</p>
                   <p>Succes Chance</p>
                   <p id="chance1">{questChance1}%</p>
                 </div>
@@ -811,7 +811,7 @@
                 </div>
                 <div>
                   <p>Quest Difficulty</p>
-                  <p>2300</p>
+                  <p>2000</p>
                   <p>Succes Chance</p>
                   <p id="chance2">{questChance2}%</p>
                 </div>
@@ -982,7 +982,7 @@
               <p>10 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 0</p>
+              <p>Nexus Bonus: 1</p>
               <p>Tumble Stat Bonus: 0%</p>
               <p>Extra Tumbles: 0</p>
             </div>
@@ -1014,7 +1014,7 @@
               <p>12 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 0</p>
+              <p>Nexus Bonus: 2</p>
               <p>Tumble Stat Bonus: 0%</p>
               <p>Extra Tumbles: 0</p>
             </div>
@@ -1046,7 +1046,7 @@
               <p>20 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 0</p>
+              <p>Nexus Bonus: 4</p>
               <p>Tumble Stat Bonus: 0%</p>
               <p>Extra Tumbles: 0</p>
             </div>
@@ -1078,7 +1078,7 @@
               <p>27 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 0</p>
+              <p>Nexus Bonus: 5</p>
               <p>Tumble Stat Bonus: 1%</p>
               <p>Extra Tumbles: 0</p>
             </div>
@@ -1110,7 +1110,7 @@
               <p>55 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 1</p>
+              <p>Nexus Bonus: 10</p>
               <p>Tumble Stat Bonus: 2%</p>
               <p>Extra Tumbles: 0</p>
             </div>
@@ -1142,7 +1142,7 @@
               <p>75 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 2</p>
+              <p>Nexus Bonus: 15</p>
               <p>Tumble Stat Bonus: 2%</p>
               <p>Extra Tumbles: 0</p>
             </div>
@@ -1174,7 +1174,7 @@
               <p>125 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 4</p>
+              <p>Nexus Bonus: 25</p>
               <p>Tumble Stat Bonus: 5%</p>
               <p>Extra Tumbles: 0</p>
             </div>
@@ -1206,7 +1206,7 @@
               <p>155 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 5</p>
+              <p>Nexus Bonus: 30</p>
               <p>Tumble Stat Bonus: 10%</p>
               <p>Extra Tumbles: 0</p>
             </div>
@@ -1238,7 +1238,7 @@
               <p>220 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 50</p>
+              <p>Nexus Bonus: 300</p>
               <p>Tumble Stat Bonus: 18%</p>
               <p>Extra Tumbles: 1</p>
             </div>
@@ -1270,7 +1270,7 @@
               <p>330 Hours</p>
             </div>
             <div>
-              <p>Nexus Bonus: 100</p>
+              <p>Nexus Bonus: 600</p>
               <p>Tumble Stat Bonus: 20%</p>
               <p>Extra Tumbles: 2</p>
             </div>

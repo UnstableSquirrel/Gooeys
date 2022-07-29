@@ -8,8 +8,8 @@ import Gooeys from "./Gooeys.svelte"
 // $: Gooeys.feedForQuest0
 
 
-const FRUIT_CONTRACT = "0x2375874eb409095efa6090bf7085ae3922543c72"
-const GOOEY_CONTRACT = "0xFAB55Fe6E7483b1ADBAcC377C2544b4ee79010c1"
+const FRUIT_CONTRACT = "0x1e271BA89e811fa8145683652000414d15e38d22"
+const GOOEY_CONTRACT = "0x3154D38F35febE08FD0afdc6c3A1B833a49F69de"
 let wallet = window.localStorage.getItem("userAddress")
 $: wallet
 let gas = window.localStorage.getItem("gas")
