@@ -24,10 +24,12 @@
 
     let allStats = []
     let userGooeys = []
+    let gooeyNumbers = []
 
     let latestBlock
     let gooeyLife = []
     let questTime = []
+    let tumbleCoolDown = []
 
     let checkOnQuest = []
     let questBatchCompletion = []
@@ -69,6 +71,7 @@
         // const tumbleFees = await contract2.methods.getTumblingFeesForGooeys("0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA", 94).call({ from: wallet })
 
         userGooeys.push(ids)
+        gooeyNumbers.push(userGooeys[0])
         // console.log(userGooeys)
 
           for (let i in userGooeys) {  
@@ -78,6 +81,7 @@
               for (const x of value) {
                 const data = await contract.methods.gooeyAttributes(x).call({ from: wallet })
                 const questData = await contract.methods.getCurrentQuestInfoABIv1(x).call({ from: wallet })
+                const tumbleInfo = await contract.methods.getTumbleAvailabilityBlock(x).call({ from: wallet })
                 latestBlock = await web3.eth.getBlockNumber()
 
                 checkOnQuest.push(questData[0])
@@ -94,6 +98,17 @@
                   "Hours" : Math.floor(questTimeSeconds % (3600 * 24) / 3600), 
                   "Minutes" : Math.floor(questTimeSeconds % 3600 / 60), 
                   "Seconds" : Math.floor(questTimeSeconds % 60)
+                })
+                let tumbleAvailability = (tumbleInfo - latestBlock) * 2
+                parseInt(tumbleAvailability)
+                if (tumbleAvailability < 0) {
+                  tumbleAvailability = 0
+                }
+                tumbleCoolDown.push({
+                  "Days" : Math.floor(tumbleAvailability / (3600 * 24)), 
+                  "Hours" : Math.floor(tumbleAvailability % (3600 * 24) / 3600), 
+                  "Minutes" : Math.floor(tumbleAvailability % 3600 / 60), 
+                  "Seconds" : Math.floor(tumbleAvailability % 60)
                 })
               }
             }
@@ -124,6 +139,7 @@
         // console.log(comeBackIn)
         // console.log(questBatchSending)
         // console.log(feedForQuest0, feedForQuest1, feedForQuest2, feedForQuest3, feedForQuest4, feedForQuest5)
+        // console.log(tumbleCoolDown)
       }
 
 
@@ -347,7 +363,7 @@
         const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 
         const transfer = await contract.methods.safeTransferFrom(wallet, transferTo, transferTokenId).send({ from: wallet, gasPrice : gas })
-        console.log(transfer);
+        console.log(transfer)
       }
 
       /////////// Transfer Gooeys END /////////////////////////////////////////////////////////////////////////////////////////////
@@ -362,6 +378,26 @@
         // console.log(id)
         window.localStorage.setItem(GooeyId, QuestId)
       }
+
+
+
+
+
+
+
+
+
+
+      /////////// Tumble Gooeys /////////////////////////////////////////////////////////////////////////////////////////////////////
+      let tumbleA = null
+      let tumbleB = null
+      async function tumbleGooeys() {
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
+
+        const tumble = await contract.methods.tumble(tumbleA, tumbleB).send({ from: wallet, gasPrice : gas })
+        console.log(tumble)
+      }
+      /////////// Tumble Gooeys END /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -435,7 +471,7 @@
 
       function closeModal5(i) {
           GooeyFruitArray = i
-          // console.log(GooeyFruitArray)
+          console.log(GooeyFruitArray)
           modalSwtich5 = "close"
           feedAllGooeys()
       }
@@ -444,10 +480,11 @@
           modalSwtich5 = "close"
       }
 
-      function showModal5(i) {
+      function showModal5(i, a) {
           FruitId = parseInt(i)
+          FruitAmount = parseInt(a)
           fruitIdToConsume3 = FruitId
-          console.log(fruitIdToConsume3)
+          console.log(fruitIdToConsume3, FruitAmount)
           modalSwtich5 = "open"
       }
 
@@ -473,13 +510,14 @@
       //     // feedAllGooeys()
       // }
 
+      let FruitAmount
       let GooeyFruitArray
       let fruitIdToConsume3
       async function feedAllGooeys() {
       const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 
       let batch = new web3.BatchRequest()
-        for (let i = 0; i < GooeyFruitArray.length; i++) {
+        for (let i = 0; i < FruitAmount; i++) {
           batch.add(contract.methods.consumeFruit(GooeyFruitArray[i], 1, fruitIdToConsume3).send({ from: wallet, gasPrice : gas }))
         }
         batch.execute()
@@ -615,6 +653,21 @@
         <div class="transfer-button-container">
           <button on:click="{openModal2}" on:click="{getTransferId(stat.tokenId)}">Transfer</button>
         </div>
+
+        <!-- {#if (tumbleCoolDown[index].Days == 0) && (tumbleCoolDown[index].Hours == 0) && (tumbleCoolDown[index].Minutes == 0) && (tumbleCoolDown[index].Seconds == 0)}
+        <div style="background-color: rgb(206, 206, 206); justify-content: center; height: 34px;">
+          <p style="justify-content: center; font-size: 17px; font-weight: 700;">Ready to Tumble</p>
+        </div>
+        {/if} -->
+        <!-- {#if (tumbleCoolDown[index].Days > 0) && (tumbleCoolDown[index].Hours > 0) && (tumbleCoolDown[index].Minutes > 0) && (tumbleCoolDown[index].Seconds > 0)} -->
+        <div class="tumble-time">
+          <p>Tumble Cool down: </p>
+          <p>{tumbleCoolDown[index].Days} Days</p>
+          <p>{tumbleCoolDown[index].Hours} Hours</p>
+          <p>{tumbleCoolDown[index].Minutes} Minutes</p>
+          <p>{tumbleCoolDown[index].Seconds} Seconds</p>
+        </div>
+        <!-- {/if} -->
 
         <!-- {#if selectedQuests == undefined}
         <div class="batch-quest-container">
@@ -752,6 +805,35 @@
       <button on:click="{sendAllToQuests}">Send All To Quests</button>
     </div>
     {/if}
+
+
+
+
+
+    <div style=" margin-top: 40px; text-align: center; display: grid; justify-items: center;">
+      <div style="text-align: center; display: grid; justify-items: center; grid-template-columns: auto auto">
+        <div>
+          <label style="padding: 5px 0px; grid-gap: 5px; font-size: 14px; font-weight: 700; color: white; text-shadow: rgb(23, 49, 79) -1px -1px 0px, rgb(23, 49, 79) 1px -1px 0px, rgb(23, 49, 79) -1px 1px 0px, rgb(23, 49, 79) 1px 1px 0px;" for="gooeyA">Gooey A</label>
+          <!-- <input type="number" name="gooeyA" bind:value="{tumbleA}"> -->
+          <select style="margin-right: 5px; border-radius: 10px; background-color: azure; height: 30px;" bind:value="{tumbleA}">
+            {#each userGooeys[0] as gooey, i}
+            <option value={gooey}>{gooey}</option>
+            {/each}
+          </select>
+        </div>
+        <div>
+          <label style="padding: 5px 0px; grid-gap: 5px; font-size: 14px; font-weight: 700; color: white; text-shadow: rgb(23, 49, 79) -1px -1px 0px, rgb(23, 49, 79) 1px -1px 0px, rgb(23, 49, 79) -1px 1px 0px, rgb(23, 49, 79) 1px 1px 0px;" for="gooeyB">Gooey B</label>
+          <!-- <input type="number" name="gooeyB" bind:value="{tumbleB}"> -->
+          <select style="margin-left: 5px; border-radius: 10px; background-color: azure; height: 30px;" bind:value="{tumbleB}">
+            {#each userGooeys[0] as gooey, i}
+            <option value={gooey}>{gooey}</option>
+            {/each}
+        </div>
+      </div>
+      <div style="margin-top: 15px;">
+        <button on:click="{tumbleGooeys}">Tumble</button>
+      </div>
+    </div>
 
 
 
@@ -966,7 +1048,7 @@
                 <button id="0" on:click="{() => showModal5(0)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="0"  on:click="{() => showModal5(0)}">Feed All</button>
+                <button id="0"  on:click="{() => showModal5(0,userFruits[0][0])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-0">
@@ -998,7 +1080,7 @@
                 <button id="1" on:click="{() => showModal5(1)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="1" on:click="{() => showModal5(1)}">Feed All</button>
+                <button id="1" on:click="{() => showModal5(1,userFruits[0][1])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-1">
@@ -1030,7 +1112,7 @@
                 <button id="2" on:click="{() => showModal5(2)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="2" on:click="{() => showModal5(2)}">Feed All</button>
+                <button id="2" on:click="{() => showModal5(2,userFruits[0][2])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-2">
@@ -1062,7 +1144,7 @@
                 <button id="3" on:click="{() => showModal5(3)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="3" on:click="{() => showModal5(3)}">Feed All</button>
+                <button id="3" on:click="{() => showModal5(3,userFruits[0][3])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-3">
@@ -1094,7 +1176,7 @@
                 <button id="4" on:click="{() => showModal5(4)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="4" on:click="{() => showModal5(4)}">Feed All</button>
+                <button id="4" on:click="{() => showModal5(4,userFruits[0][4])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-4">
@@ -1126,7 +1208,7 @@
                 <button id="5" on:click="{() => showModal5(5)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="5" on:click="{() => showModal5(5)}">Feed All</button>
+                <button id="5" on:click="{() => showModal5(5,userFruits[0][5])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-5">
@@ -1158,7 +1240,7 @@
                 <button id="6" on:click="{() => showModal5(6)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="6" on:click="{() => showModal5(6)}">Feed All</button>
+                <button id="6" on:click="{() => showModal5(6,userFruits[0][6])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-6">
@@ -1190,7 +1272,7 @@
                 <button id="7" on:click="{() => showModal5(7)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="7" on:click="{() => showModal5(7)}">Feed All</button>
+                <button id="7" on:click="{() => showModal5(7,userFruits[0][7])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-7">
@@ -1222,7 +1304,7 @@
                 <button id="8" on:click="{() => showModal5(8)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="8" on:click="{() => showModal5(8)}">Feed All</button>
+                <button id="8" on:click="{() => showModal5(8,userFruits[0][8])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-8">
@@ -1254,7 +1336,7 @@
                 <button id="9" on:click="{() => showModal5(9)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="9" on:click="{() => showModal5(9)}">Feed All</button>
+                <button id="9" on:click="{() => showModal5(9,userFruits[0][9])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-9">
@@ -1286,7 +1368,7 @@
                 <button id="10" on:click="{() => showModal5(10)}">Eat X Times</button>
               </div> -->
               <div style="display: grid; justify-items: center;">
-                <button id="10" on:click="{() => showModal5(10)}">Feed All</button>
+                <button id="10" on:click="{() => showModal5(10,userFruits[0][10])}">Feed All</button>
               </div>
             </div>
             <div class="fruit-amount" id="fruit-amount-10">
@@ -1362,6 +1444,10 @@
 
   </section> 
 
+
+
+
+  
 </main>
 
 <style>
@@ -1661,6 +1747,25 @@
         padding: 5px 0px !important;
         max-width: 99% !important;
       } */
+
+      .tumble-time {
+        border-top: none !important;
+        grid-template-columns: auto auto auto auto auto !important;
+        text-align: center !important; 
+        height: 34px !important;
+      }
+
+      .tumble-time > p {
+        padding: 0px !important;
+        margin: 5px 0px !important;
+      }
+
+      .tumble-time > p:nth-child(1) {
+        text-align: left;
+        padding-left: 5px !important;
+        margin: 1px 0px !important;
+        font-size: 9px;
+      }
 
       #Gooey-Container > .Gooey > img {
         width: 200px;
