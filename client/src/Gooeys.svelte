@@ -321,7 +321,7 @@
         
         let batch = new web3.BatchRequest()
         for (let i = 0; i < questBatchCompletion.length; i++) {
-          batch.add(contract.methods.completeQuest(questBatchCompletion[i]).send({ from: wallet, gasPrice : gas }))
+          batch.add(contract.methods.completeQuest(questBatchCompletion[i]).send.request({ from: wallet, gasPrice : gas }))
         }
         batch.execute()
         // console.log(batch)
@@ -332,7 +332,7 @@
         
         let batch = new web3.BatchRequest()
         for (let i = 0; i < questBatchSending.length; i++) {
-          batch.add(contract.methods.startQuest(questBatchSending[i], parseInt(window.localStorage.getItem(questBatchSending[i]))).send({ from: wallet, gasPrice : gas }))
+          batch.add(contract.methods.startQuest(questBatchSending[i], parseInt(window.localStorage.getItem(questBatchSending[i]))).send.request({ from: wallet, gasPrice : gas }))
         }
         batch.execute()
         // console.log(batch)
@@ -510,18 +510,51 @@
       //     // feedAllGooeys()
       // }
 
+      let fillerArray = []
       let FruitAmount
       let GooeyFruitArray
       let fruitIdToConsume3
       async function feedAllGooeys() {
-      const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
+        const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 
-      let batch = new web3.BatchRequest()
-        for (let i = 0; i < FruitAmount; i++) {
-          batch.add(contract.methods.consumeFruit(GooeyFruitArray[i], 1, fruitIdToConsume3).send({ from: wallet, gasPrice : gas }))
+        if (FruitAmount > GooeyFruitArray.length) {
+          for (let i = 0; i < GooeyFruitArray.length; i++) {
+            fillerArray.push(GooeyFruitArray[i])
+          }
+        }
+        if (FruitAmount < GooeyFruitArray.length) {
+          for (let i = 0; i < FruitAmount; i++) {
+            fillerArray.push(GooeyFruitArray[i])
+          }
+        }
+        if (FruitAmount == GooeyFruitArray.length) {
+          for (let i = 0; i < FruitAmount; i++) {
+            fillerArray.push(GooeyFruitArray[i])
+          }
+        }
+        console.log(fillerArray)
+        let batch = new web3.BatchRequest()
+        for (let i = 0; i < fillerArray.length; i++) {
+          batch.add(contract.methods.consumeFruit(fillerArray[i], 1, fruitIdToConsume3).send.request({ from: wallet, gasPrice : gas }), "latest", i)
         }
         batch.execute()
-        // console.log(batch)
+        // .then(res => console.log(res))
+        // .catch(err => console.log(err))
+
+        // const batchExecution = () => {
+        //   try {
+        //       return new Promise((resolve) => {
+        //         for (let i = 0; i < fillerArray.length; i++) {
+        //           batch.add(contract.methods.consumeFruit(fillerArray[i], 1, fruitIdToConsume3).send.request({ from: wallet, gasPrice : gas }))
+        //         }
+        //       })
+        //       batch.execute()
+        //   } 
+        //   catch(e) {
+        //         console.log("error")
+        //   }
+        // }
+        // await batchExecution
       }
 
 </script>

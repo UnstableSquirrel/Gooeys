@@ -138,7 +138,7 @@ function feedAll(i) {
 let gooeyConsumeFruitId3
 let fruitIdToConsume3
 async function feedAllGooeys() {
-const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT);
+const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 
 let batch = new web3.BatchRequest()
   for (let i = 0; i < feedForQuest0.length; i++) {
