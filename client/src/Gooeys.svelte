@@ -532,12 +532,13 @@
             fillerArray.push(GooeyFruitArray[i])
           }
         }
-        console.log(fillerArray)
+        // console.log(fillerArray)
         let batch = new web3.BatchRequest()
         for (let i = 0; i < fillerArray.length; i++) {
           batch.add(contract.methods.consumeFruit(fillerArray[i], 1, fruitIdToConsume3).send.request({ from: wallet, gasPrice : gas }), "latest", i)
         }
         batch.execute()
+        fillerArray = []
         // .then(res => console.log(res))
         // .catch(err => console.log(err))
 
