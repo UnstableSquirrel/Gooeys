@@ -13,9 +13,9 @@
   
   window.userAddress = null
   let wallet
-  // $: if (wallet != window.userAddress) {
-  //     wallet = window.userAddress
-  // }
+  $: if (wallet != window.userAddress) {
+      wallet = window.userAddress
+  }
 
   // wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
 
