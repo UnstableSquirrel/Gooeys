@@ -13,10 +13,10 @@
     const GOOEY_CONTRACT = "0x3154D38F35febE08FD0afdc6c3A1B833a49F69de"
     const FRUIT_CONTRACT = "0x1e271BA89e811fa8145683652000414d15e38d22"
     let gas = window.localStorage.getItem("gas")
-    // let wallet = window.localStorage.getItem("userAddress")
-    // $: wallet
+    let wallet = window.localStorage.getItem("userAddress")
+    $: wallet
 
-    let wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
+    // let wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
     
 
 
