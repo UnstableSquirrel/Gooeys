@@ -65,20 +65,20 @@
 
 
     let sortFunction
-    let currentSort
+    // let currentSort
 
     function sortByLowestNumber() {
       allStats.sort(function(a, b) {
           return a.tokenId - b.tokenId
         })
-      currentSort = window.localStorage.setItem("currentSort", "Number ⮭")
+      // currentSort = window.localStorage.setItem("currentSort", "Number ⮭")
     }
 
     function sortByHighestNumber() {
       allStats.sort(function(a, b) {
           return b.tokenId - a.tokenId
         })
-      currentSort = window.localStorage.setItem("currentSort", "Number ⮯")
+      // currentSort = window.localStorage.setItem("currentSort", "Number ⮯")
     }
 
   
@@ -89,14 +89,14 @@
       allStats.sort(function(a, b) {
           return (parseInt(a.stats.atk) + parseInt(a.stats.hp) + parseInt(a.stats.def) + parseInt(a.stats.spd)) - (parseInt(b.stats.atk) + parseInt(b.stats.hp) + parseInt(b.stats.def) + parseInt(b.stats.spd))
         })
-        currentSort = window.localStorage.setItem("currentSort", "Strength ⮭")
+        // currentSort = window.localStorage.setItem("currentSort", "Strength ⮭")
     }
 
     function sortByHighestStrength() {
       allStats.sort(function(a, b) {
           return (parseInt(b.stats.atk) + parseInt(b.stats.hp) + parseInt(b.stats.def) + parseInt(b.stats.spd)) - (parseInt(a.stats.atk) + parseInt(a.stats.hp) + parseInt(a.stats.def) + parseInt(a.stats.spd))
         })
-      currentSort = window.localStorage.setItem("currentSort", "Strength ⮯")
+      // currentSort = window.localStorage.setItem("currentSort", "Strength ⮯")
     }
 
 
@@ -107,14 +107,14 @@
       allStats.sort(function(a, b) {
           return a.life.bond - b.life.bond
         })
-        currentSort = window.localStorage.setItem("currentSort", "Nexus ⮭")
+        // currentSort = window.localStorage.setItem("currentSort", "Nexus ⮭")
     }
 
     function sortByHighestNexus() {
       allStats.sort(function(a, b) {
           return b.life.bond - a.life.bond
         })
-      currentSort = window.localStorage.setItem("currentSort", "Nexus ⮯")
+      // currentSort = window.localStorage.setItem("currentSort", "Nexus ⮯")
     }
 
 
@@ -125,14 +125,14 @@
       allStats.sort(function(a, b) {
           return a.life.tumblesRemaining - b.life.tumblesRemaining
         })
-        currentSort = window.localStorage.setItem("currentSort", "Tumbles ⮭")
+        // currentSort = window.localStorage.setItem("currentSort", "Tumbles ⮭")
     }
 
     function sortByHighestTumbles() {
       allStats.sort(function(a, b) {
           return b.life.tumblesRemaining - a.life.tumblesRemaining
         })
-      currentSort = window.localStorage.setItem("currentSort", "Tumbles ⮯")
+      // currentSort = window.localStorage.setItem("currentSort", "Tumbles ⮯")
     }
 
 
@@ -246,20 +246,49 @@
         if ((window.localStorage.getItem("Sort") != null) || (window.localStorage.getItem("Sort") != undefined)) {
           sortFunction = window.localStorage.getItem("Sort")
         }
+
         if ((sortFunction == null) || (sortFunction == undefined)) {
-          sortFunction = "sortBylowestNumber()"
-          window.localStorage.setItem("Sort", "sortByLowestNumber()")
+          sortFunction = "Number ⮭"
+          window.localStorage.setItem("Sort", "Number ⮭")
         }
+
+        if(sortFunction == "Number ⮭") {
+          sortByLowestNumber()
+        }
+        if(sortFunction == "Number ⮯") {
+          sortByHighestNumber()
+        }
+
+        if(sortFunction == "Strength ⮭") {
+          sortByLowestStrength()
+        }
+        if(sortFunction == "Strength ⮯") {
+          sortByHighestStrength()
+        }
+
+        if(sortFunction == "Nexus ⮭") {
+          sortByLowestNexus()
+        }
+        if(sortFunction == "Nexus ⮯") {
+          sortByHighestNexus()
+        }
+
+        if(sortFunction == "Tumbles ⮭") {
+          sortByLowestTumbles()
+        }
+        if(sortFunction == "Tumbles ⮯") {
+          sortByHighestTumbles()
+        }
+        
         // console.log(sortFunction)
-        eval(sortFunction)
 
-        if ((window.localStorage.getItem("currentSort") == null) || (window.localStorage.getItem("currentSort") == undefined) ) {
-          currentSort = window.localStorage.setItem("currentSort", "Number ⮭")
-        }
+        // if ((window.localStorage.getItem("currentSort") == null) || (window.localStorage.getItem("currentSort") == undefined) ) {
+        //   currentSort = window.localStorage.setItem("currentSort", "Number ⮭")
+        // }
 
-        if ((window.localStorage.getItem("currentSort") != null) || (window.localStorage.getItem("currentSort") != undefined) ) {
-          currentSort = window.localStorage.getItem("currentSort")
-        }
+        // if ((window.localStorage.getItem("currentSort") != null) || (window.localStorage.getItem("currentSort") != undefined) ) {
+        //   currentSort = window.localStorage.getItem("currentSort")
+        // }
 
         allStats = allStats
 
@@ -774,18 +803,18 @@
 
     <div style="display: grid; justify-items: center; margin: 25px 0px;">
       <label style="font-size: 18px; font-weight: 700; margin: 10px 0px 10px 0px; color: rgb(0, 59, 66);" for="sort">Sort By: </label>
-      <select style="font-size: 15px; font-weight: 700; border: 1px solid black; border-radius: 10px; padding: 5px 0px 5px 5px; background-color: rgb(243, 227, 247);" value="{currentSort}">
-        <option on:click="{() => sortFunctionToStore("sortByLowestNumber()")}">Number ⮭</option>
-        <option on:click="{() => sortFunctionToStore("sortByHighestNumber()")}">Number ⮯</option>
+      <select style="font-size: 15px; font-weight: 700; border: 1px solid black; border-radius: 10px; padding: 5px 0px 5px 5px; background-color: rgb(243, 227, 247);" value="{sortFunction}">
+        <option on:click="{() => sortFunctionToStore("Number ⮭")}">Number ⮭</option>
+        <option on:click="{() => sortFunctionToStore("Number ⮯")}">Number ⮯</option>
         
-        <option on:click="{() => sortFunctionToStore("sortByLowestStrength()")}">Strength ⮭</option>
-        <option on:click="{() => sortFunctionToStore("sortByHighestStrength()")}">Strength ⮯</option>
+        <option on:click="{() => sortFunctionToStore("Strength ⮭")}">Strength ⮭</option>
+        <option on:click="{() => sortFunctionToStore("Strength ⮯")}">Strength ⮯</option>
 
-        <option on:click="{() => sortFunctionToStore("sortByLowestNexus()")}">Nexus ⮭</option>
-        <option on:click="{() => sortFunctionToStore("sortByHighestNexus()")}">Nexus ⮯</option>
+        <option on:click="{() => sortFunctionToStore("Nexus ⮭")}">Nexus ⮭</option>
+        <option on:click="{() => sortFunctionToStore("Nexus ⮯")}">Nexus ⮯</option>
 
-        <option on:click="{() => sortFunctionToStore("sortByLowestTumbles()")}">Tumbles ⮭</option>
-        <option on:click="{() => sortFunctionToStore("sortByHighestTumbles()")}">Tumbles ⮯</option>
+        <option on:click="{() => sortFunctionToStore("Tumbles ⮭")}">Tumbles ⮭</option>
+        <option on:click="{() => sortFunctionToStore("Tumbles ⮯")}">Tumbles ⮯</option>
       </select> 
     </div>
 
@@ -1060,12 +1089,12 @@
 
 
 
-    <!-- {:catch error} -->
-    {#if (userGooeys == null) || (userGooeys == undefined)}
+    {:catch error}
+    <!-- {#if (userGooeys == null) || (userGooeys == undefined)} -->
     <div id="Gooey-Container">
       <div id="No-Gooeys">Something went wrong!</div>
     </div>
-    {/if}
+    <!-- {/if} -->
     <!-- <div id="Gooey-Container">
       <div id="No-Gooeys">You don't have any Gooeys in your Wallet. Get one at <a href="https://opensea.io/collection/gooeysp2e">Opensea!</a></div>
     </div> -->
