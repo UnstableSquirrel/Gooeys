@@ -17,6 +17,9 @@
   //     wallet = window.userAddress
   // }
 
+  // wallet = "0x970006c8EC4f30905BEe133bf2018413066c26Fe"
+
+
 
 
 
@@ -38,7 +41,7 @@
 
 
 
-  const FRUIT_CONTRACT = "0x2375874eb409095efa6090bf7085ae3922543c72"
+  const FRUIT_CONTRACT = "0x1e271BA89e811fa8145683652000414d15e38d22"
   let tokens = []
   let fruits = []
   let dg = 0
@@ -59,9 +62,9 @@
     } else {
       alert("No ETH brower extension detected.")
     }
-    window.userAddress = window.localStorage.getItem("userAddress")
-    wallet = window.userAddress
-    gas = window.localStorage.getItem("gas").substring(0, window.localStorage.getItem("gas").length - 9)
+      window.userAddress = window.localStorage.getItem("userAddress")
+      wallet = window.userAddress
+      gas = window.localStorage.getItem("gas").substring(0, window.localStorage.getItem("gas").length - 9)
   }
 
   function truncateAddress(address) {

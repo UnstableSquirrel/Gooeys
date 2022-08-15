@@ -64,11 +64,104 @@
 
 
 
+    let sortFunction
+    let currentSort
+
+    function sortByLowestNumber() {
+      allStats.sort(function(a, b) {
+          return a.tokenId - b.tokenId
+        })
+      currentSort = window.localStorage.setItem("currentSort", "Number ⮭")
+    }
+
+    function sortByHighestNumber() {
+      allStats.sort(function(a, b) {
+          return b.tokenId - a.tokenId
+        })
+      currentSort = window.localStorage.setItem("currentSort", "Number ⮯")
+    }
+
+  
+
+
+
+    function sortByLowestStrength() {
+      allStats.sort(function(a, b) {
+          return (parseInt(a.stats.atk) + parseInt(a.stats.hp) + parseInt(a.stats.def) + parseInt(a.stats.spd)) - (parseInt(b.stats.atk) + parseInt(b.stats.hp) + parseInt(b.stats.def) + parseInt(b.stats.spd))
+        })
+        currentSort = window.localStorage.setItem("currentSort", "Strength ⮭")
+    }
+
+    function sortByHighestStrength() {
+      allStats.sort(function(a, b) {
+          return (parseInt(b.stats.atk) + parseInt(b.stats.hp) + parseInt(b.stats.def) + parseInt(b.stats.spd)) - (parseInt(a.stats.atk) + parseInt(a.stats.hp) + parseInt(a.stats.def) + parseInt(a.stats.spd))
+        })
+      currentSort = window.localStorage.setItem("currentSort", "Strength ⮯")
+    }
+
+
+
+
+
+    function sortByLowestNexus() {
+      allStats.sort(function(a, b) {
+          return a.life.bond - b.life.bond
+        })
+        currentSort = window.localStorage.setItem("currentSort", "Nexus ⮭")
+    }
+
+    function sortByHighestNexus() {
+      allStats.sort(function(a, b) {
+          return b.life.bond - a.life.bond
+        })
+      currentSort = window.localStorage.setItem("currentSort", "Nexus ⮯")
+    }
+
+
+
+
+
+    function sortByLowestTumbles() {
+      allStats.sort(function(a, b) {
+          return a.life.tumblesRemaining - b.life.tumblesRemaining
+        })
+        currentSort = window.localStorage.setItem("currentSort", "Tumbles ⮭")
+    }
+
+    function sortByHighestTumbles() {
+      allStats.sort(function(a, b) {
+          return b.life.tumblesRemaining - a.life.tumblesRemaining
+        })
+      currentSort = window.localStorage.setItem("currentSort", "Tumbles ⮯")
+    }
+
+
+
+
+
+    function sortFunctionToStore(k) {
+      let value = k
+      // console.log(id)
+      window.localStorage.setItem("Sort", value)
+    }
+
+
+
+
+
     async function getData() {
         const contract = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
 
         const ids = await contract.methods.tokensOfOwner(wallet).call({ from: wallet })
         // const tumbleFees = await contract2.methods.getTumblingFeesForGooeys("0xF3dA67F1Cfd5511f830C3a7e4b820a3b702746BA", 94).call({ from: wallet })
+
+        // console.log(ids)
+        // ids.sort(function(a, b) {
+        //   return a - b
+        // })
+        // console.log(ids)
+        let timeCounter = 0
+        let timeCounter2 = 0
 
         userGooeys.push(ids)
         gooeyNumbers.push(userGooeys[0])
@@ -93,23 +186,41 @@
                   questTimeSeconds = 0
                 }
                 soonestReturner.push(questTimeSeconds)
-                questTime.push({
+                let questTimeId = userGooeys[0][timeCounter]
+                questTime.push(
+                {
+                  "Gooey" : questTimeId,
                   "Days" : Math.floor(questTimeSeconds / (3600 * 24)), 
                   "Hours" : Math.floor(questTimeSeconds % (3600 * 24) / 3600), 
                   "Minutes" : Math.floor(questTimeSeconds % 3600 / 60), 
                   "Seconds" : Math.floor(questTimeSeconds % 60)
                 })
+                // allStats.push({
+                //   "Days" : Math.floor(questTimeSeconds / (3600 * 24)), 
+                //   "Hours" : Math.floor(questTimeSeconds % (3600 * 24) / 3600), 
+                //   "Minutes" : Math.floor(questTimeSeconds % 3600 / 60), 
+                //   "Seconds" : Math.floor(questTimeSeconds % 60)
+                // })
+
                 let tumbleAvailability = (tumbleInfo - latestBlock) * 2
                 parseInt(tumbleAvailability)
                 if (tumbleAvailability < 0) {
                   tumbleAvailability = 0
                 }
                 tumbleCoolDown.push({
+                  "Gooey" : questTimeId,
                   "Days" : Math.floor(tumbleAvailability / (3600 * 24)), 
                   "Hours" : Math.floor(tumbleAvailability % (3600 * 24) / 3600), 
                   "Minutes" : Math.floor(tumbleAvailability % 3600 / 60), 
                   "Seconds" : Math.floor(tumbleAvailability % 60)
                 })
+                timeCounter++
+                // allStats.push({
+                //   "Days" : Math.floor(tumbleAvailability / (3600 * 24)), 
+                //   "Hours" : Math.floor(tumbleAvailability % (3600 * 24) / 3600), 
+                //   "Minutes" : Math.floor(tumbleAvailability % 3600 / 60), 
+                //   "Seconds" : Math.floor(tumbleAvailability % 60)
+                // })
               }
             }
           }
@@ -119,14 +230,61 @@
             if (foodStoreSeconds < 0) { 
               foodStoreSeconds = 0
             }
+            let questTimeId = userGooeys[0][timeCounter2]
             gooeyLife.push({
+              "Gooey" : questTimeId,
               "Days" : Math.floor(foodStoreSeconds / (3600 * 24)), 
               "Hours" : Math.floor(foodStoreSeconds % (3600 * 24) / 3600), 
               "Minutes" : Math.floor(foodStoreSeconds % 3600 / 60), 
               "Seconds" : Math.floor(foodStoreSeconds % 60)
             })
+            timeCounter2++
           }
         allStats = allStats
+        let temp = []
+
+        if ((window.localStorage.getItem("Sort") != null) || (window.localStorage.getItem("Sort") != undefined)) {
+          sortFunction = window.localStorage.getItem("Sort")
+        }
+        if ((sortFunction == null) || (sortFunction == undefined)) {
+          sortFunction = "sortBylowestNumber()"
+          window.localStorage.setItem("Sort", "sortByLowestNumber()")
+        }
+        // console.log(sortFunction)
+        eval(sortFunction)
+
+        if ((window.localStorage.getItem("currentSort") == null) || (window.localStorage.getItem("currentSort") == undefined) ) {
+          currentSort = window.localStorage.setItem("currentSort", "Number ⮭")
+        }
+
+        if ((window.localStorage.getItem("currentSort") != null) || (window.localStorage.getItem("currentSort") != undefined) ) {
+          currentSort = window.localStorage.getItem("currentSort")
+        }
+
+        allStats = allStats
+
+        // console.log(allStats[0][4])
+
+        for (let i = 0; i < allStats.length; i++) {
+          temp.push(allStats[i][4])
+          // console.log(temp)
+        }
+
+        gooeyLife.sort((a, b) => {
+          return temp.indexOf(a.Gooey) - temp.indexOf(b.Gooey);
+        })
+
+        questTime.sort((a, b) => {  
+          return temp.indexOf(a.Gooey) - temp.indexOf(b.Gooey);
+        })
+        
+        tumbleCoolDown.sort((a, b) => {  
+          return temp.indexOf(a.Gooey) - temp.indexOf(b.Gooey);
+        })
+
+        // console.log(temp, gooeyLife, questTime, tumbleCoolDown)
+        // console.log(allStats)
+        
         // window.localStorage.deleteItem("selectedQuests")
         // console.log(questBatchCompletion)
         soonestReturner.sort((a, b) => a - b)
@@ -234,12 +392,13 @@
         if (questChance6 > 100 ) { questChance6 = "100"}
 
         startQuestGooeyId = n
+        console.log(startQuestGooeyId)
       }
 
       function getQuestId(btn) {
         let n = parseInt(btn)
         startQuestType = n
-        // console.log(startQuestType)
+        console.log(startQuestType)
         sendQuest()
       }
 
@@ -249,14 +408,14 @@
 
       function getCompleteQuestId(btn) {
         let n = parseInt(btn)
-        // console.log(n)
+        console.log(n)
         returnQuestGooeyId = n
         completeQuest()
       }
 
       function getCancelQuestId(btn) {
         let n = parseInt(btn)
-        // console.log(n)
+        console.log(n)
         cancelQuestGooeyId = n
         cancelQuest()
       }
@@ -267,7 +426,7 @@
 
       function getTransferId(btn) {
         let n = parseInt(btn)
-        // console.log(n)
+        console.log(n)
         transferTokenId = n
         transferGooey()
       }
@@ -324,7 +483,7 @@
           batch.add(contract.methods.completeQuest(questBatchCompletion[i]).send.request({ from: wallet, gasPrice : gas }))
         }
         batch.execute()
-        // console.log(batch)
+        console.log(batch)
       }
 
       async function sendAllToQuests() {
@@ -335,7 +494,7 @@
           batch.add(contract.methods.startQuest(questBatchSending[i], parseInt(window.localStorage.getItem(questBatchSending[i]))).send.request({ from: wallet, gasPrice : gas }))
         }
         batch.execute()
-        // console.log(batch)
+        console.log(batch)
       }
 
 
@@ -431,7 +590,7 @@
 
       async function getFruitsData() {
           const contract = new window.web3.eth.Contract(FruitsABI, FRUIT_CONTRACT)
-          const contract2 = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
+          // const contract2 = new window.web3.eth.Contract(GooeyABI, GOOEY_CONTRACT)
           const tokensAndFruits = await contract.methods.loadTokenAndFruitInfo(wallet, 14).call({ from: wallet })
           userFruits.push(tokensAndFruits[1])
           // console.log(ids)
@@ -565,6 +724,12 @@
     {#await getData()}
     <p style="font-size: 25px; font-weight: 700; color: white; text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;">Loading ...</p>
     {:then loaded}
+    {#if userGooeys[0].length == 0}
+    <div id="Gooey-Container">
+      <div id="No-Gooeys">You don't have any Gooeys in your Wallet. Get one at <a href="https://opensea.io/collection/gooeysp2e">Opensea!</a></div>
+    </div>
+    {/if}
+    {#if userGooeys[0].length > 0}
     <div style="display: grid; justify-items: center; margin: 0px 0px 45px 0px; width: 240px;">
       <h3><span style="font-size: 20px; font-weight: 700;">Come back in</span></h3>
       <br>
@@ -603,6 +768,24 @@
         </div> 
       </div>
     </div>
+
+    <div style="display: grid; justify-items: center; margin: 25px 0px;">
+      <label style="font-size: 18px; font-weight: 700; margin: 10px 0px 10px 0px; color: rgb(0, 59, 66);" for="sort">Sort By: </label>
+      <select style="font-size: 15px; font-weight: 700; border: 1px solid black; border-radius: 10px; padding: 5px 0px 5px 5px; background-color: rgb(243, 227, 247);" value="{currentSort}">
+        <option on:click="{() => sortFunctionToStore("sortByLowestNumber()")}">Number ⮭</option>
+        <option on:click="{() => sortFunctionToStore("sortByHighestNumber()")}">Number ⮯</option>
+        
+        <option on:click="{() => sortFunctionToStore("sortByLowestStrength()")}">Strength ⮭</option>
+        <option on:click="{() => sortFunctionToStore("sortByHighestStrength()")}">Strength ⮯</option>
+
+        <option on:click="{() => sortFunctionToStore("sortByLowestNexus()")}">Nexus ⮭</option>
+        <option on:click="{() => sortFunctionToStore("sortByHighestNexus()")}">Nexus ⮯</option>
+
+        <option on:click="{() => sortFunctionToStore("sortByLowestTumbles()")}">Tumbles ⮭</option>
+        <option on:click="{() => sortFunctionToStore("sortByHighestTumbles()")}">Tumbles ⮯</option>
+      </select> 
+    </div>
+
     <div id="Gooey-Container">
       {#each allStats as stat, index}
       <div class="Gooey">
@@ -759,7 +942,7 @@
             <!-- <span style="display: none;">{console.log(questBatchSending)}</span> -->
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 16)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck1[index] == 0)}
+          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 15)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck1[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
@@ -789,7 +972,7 @@
             <!-- <span style="display: none;">{console.log(questBatchSending)}</span> -->
           {/if}
 
-          {#if ((gooeyLife[index].Days == 0) && (gooeyLife[index].Hours <= 16)) && (questBatchSendingCheck1[index] == 0)}
+          {#if ((gooeyLife[index].Days == 0) && (gooeyLife[index].Hours < 15)) && (questBatchSendingCheck1[index] == 0)}
             <span style="display: none;">{feedForQuest1.push(stat.tokenId)}</span>
           {/if}
 
@@ -868,6 +1051,7 @@
         <button on:click="{tumbleGooeys}">Tumble</button>
       </div>
     </div>
+    {/if}
 
 
 
@@ -875,7 +1059,7 @@
 
     {:catch error}
     <div id="Gooey-Container">
-      <div id="No-Gooeys">You don't have any Gooeys in your Wallet. Get one at <a href="https://opensea.io/collection/gooeysp2e">Opensea!</a></div>
+      <div id="No-Gooeys">Something went wrong!</div>
     </div>
     {/await}
 
