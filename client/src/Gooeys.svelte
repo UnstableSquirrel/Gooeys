@@ -5,6 +5,7 @@
     import GooeyABI from "./contracts/Gooeys.json"
     import { writable, derived } from 'svelte/store';
     // import { wallet } from './App.svelte'
+    // import { onMount } from 'svelte';
 
 
 
@@ -59,6 +60,7 @@
 
     let soonestReturner = []
     let comeBackIn = []
+    let loaded = false
 
 
 
@@ -89,6 +91,7 @@
       allStats.sort(function(a, b) {
           return (parseInt(a.stats.atk) + parseInt(a.stats.hp) + parseInt(a.stats.def) + parseInt(a.stats.spd)) - (parseInt(b.stats.atk) + parseInt(b.stats.hp) + parseInt(b.stats.def) + parseInt(b.stats.spd))
         })
+      allStats = allStats
         // currentSort = window.localStorage.setItem("currentSort", "Strength ⮭")
     }
 
@@ -96,6 +99,7 @@
       allStats.sort(function(a, b) {
           return (parseInt(b.stats.atk) + parseInt(b.stats.hp) + parseInt(b.stats.def) + parseInt(b.stats.spd)) - (parseInt(a.stats.atk) + parseInt(a.stats.hp) + parseInt(a.stats.def) + parseInt(a.stats.spd))
         })
+      allStats = allStats
       // currentSort = window.localStorage.setItem("currentSort", "Strength ⮯")
     }
 
@@ -107,6 +111,7 @@
       allStats.sort(function(a, b) {
           return a.life.bond - b.life.bond
         })
+      allStats = allStats
         // currentSort = window.localStorage.setItem("currentSort", "Nexus ⮭")
     }
 
@@ -114,6 +119,7 @@
       allStats.sort(function(a, b) {
           return b.life.bond - a.life.bond
         })
+      allStats = allStats
       // currentSort = window.localStorage.setItem("currentSort", "Nexus ⮯")
     }
 
@@ -125,6 +131,7 @@
       allStats.sort(function(a, b) {
           return a.life.tumblesRemaining - b.life.tumblesRemaining
         })
+      allStats = allStats
         // currentSort = window.localStorage.setItem("currentSort", "Tumbles ⮭")
     }
 
@@ -132,6 +139,7 @@
       allStats.sort(function(a, b) {
           return b.life.tumblesRemaining - a.life.tumblesRemaining
         })
+      allStats = allStats
       // currentSort = window.localStorage.setItem("currentSort", "Tumbles ⮯")
     }
 
@@ -177,7 +185,11 @@
                 const tumbleInfo = await contract.methods.getTumbleAvailabilityBlock(x).call({ from: wallet })
                 latestBlock = await web3.eth.getBlockNumber()
 
-                checkOnQuest.push(questData[0])
+                checkOnQuest.push(
+                  {
+                    "Gooey" : x,
+                    "Status" : questData[0],
+                  })
                 allStats.push(data)
 
                 let questTimeSeconds = (questData[2] - latestBlock) * 2
@@ -311,7 +323,16 @@
           return temp.indexOf(a.Gooey) - temp.indexOf(b.Gooey);
         })
 
+        checkOnQuest.sort((a, b) => {  
+          return temp.indexOf(a.Gooey) - temp.indexOf(b.Gooey);
+        })
+
+        gooeyLife = gooeyLife
+        questTime = questTime
+        tumbleCoolDown = tumbleCoolDown
+
         // console.log(temp, gooeyLife, questTime, tumbleCoolDown)
+        // console.log(checkOnQuest)
         // console.log(allStats)
         
         // window.localStorage.deleteItem("selectedQuests")
@@ -327,6 +348,7 @@
         // console.log(questBatchSending)
         // console.log(feedForQuest0, feedForQuest1, feedForQuest2, feedForQuest3, feedForQuest4, feedForQuest5)
         // console.log(tumbleCoolDown)
+        loaded = true
       }
 
 
@@ -854,7 +876,7 @@
           <p>{gooeyLife[index].Seconds} Seconds</p>
         </div>
 
-        {#if (questTime[index].Days > 0) || (questTime[index].Hours > 0) || (questTime[index].Minutes > 0) || (questTime[index].Seconds > 0) && (checkOnQuest[index] > 0)}
+        {#if (questTime[index].Days > 0) || (questTime[index].Hours > 0) || (questTime[index].Minutes > 0) || (questTime[index].Seconds > 0) && (checkOnQuest[index].Status > 0)}
         <div>
           <p>Quest Time: </p>
           <p>{questTime[index].Days} Days</p>
@@ -864,37 +886,37 @@
         </div>
         {/if}
 
-        {#if checkOnQuest[index] == 0}
+        {#if checkOnQuest[index].Status == 0}
         <div style="background-color: rgb(255, 144, 144); justify-content: center; height: 34px;">
           <p style="justify-content: center; font-size: 17px; font-weight: 700;">No Quest</p>
         </div>
         {/if}
 
-        {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
+        {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index].Status > 0)}
         <div style="background-color: rgb(151, 255, 125); justify-content: center; height: 34px;">
           <p style="justify-content: center; font-size: 17px; font-weight: 700;"><span style="display: none; width: fit-content;">{questBatchCompletion.push(userGooeys[0][index])}</span>Quest Completed</p>
         </div>
         {/if}
 
         <div class="quest-button-area">
-          {#if (checkOnQuest[index] > 0)}
+          {#if (checkOnQuest[index].Status > 0)}
           <button class="disabled" disabled="true">Send to Quest</button>
           {/if}
-          {#if ((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] == 0))}
+          {#if ((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index].Status == 0))}
           <button on:mouseup="{openModal1}" on:click="{getSendQuestId(stat.tokenId)}">Send to Quest</button>
           {/if}
 
-          {#if !((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0))}
+          {#if !((questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index].Status > 0))}
           <button class="disabled" disabled="true">Complete Quest</button>
           {/if}
-          {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index] > 0)}
+          {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index].Status > 0)}
           <button on:click="{getCompleteQuestId(stat.tokenId)}">Complete Quest</button>
           {/if}
 
-          {#if checkOnQuest[index] == 0}
+          {#if checkOnQuest[index].Status == 0}
             <button class="disabled" disabled="true">Cancel Quest</button>
           {/if}
-          {#if checkOnQuest[index] > 0}
+          {#if checkOnQuest[index].Status > 0}
           <button on:click="{getCancelQuestId(stat.tokenId)}">Cancel Quest</button>
           {/if}
         </div>
@@ -969,28 +991,28 @@
           <span style="display: none;">{questBatchSendingCheck5.push(window.localStorage.getItem(stat.tokenId).indexOf(5))}</span>
           <!-- <span style="display: none;">{console.log(questBatchSendingCheck2)}</span> -->
 
-          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 9)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck0[index] == 0)}
+          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 9)) && (checkOnQuest[index].Status == 0) && (questBatchSendingCheck0[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
             <!-- <span style="display: none;">{console.log(questBatchSending)}</span> -->
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 15)) && (checkOnQuest[index] == 0) && (questBatchSendingCheck1[index] == 0)}
+          {#if ((gooeyLife[index].Days >= 1) || (gooeyLife[index].Hours >= 15)) && (checkOnQuest[index].Status == 0) && (questBatchSendingCheck1[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 2) || ((gooeyLife[index].Days >= 1) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck2[index] == 0)}
+          {#if ((gooeyLife[index].Days >= 2) || ((gooeyLife[index].Days >= 1) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index].Status == 0) && (questBatchSendingCheck2[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck3[index] == 0)}
+          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 10))) && (checkOnQuest[index].Status == 0) && (questBatchSendingCheck3[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
-          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 22))) && (checkOnQuest[index] == 0) && (questBatchSendingCheck4[index] == 0)}
+          {#if ((gooeyLife[index].Days >= 3) || ((gooeyLife[index].Days >= 2) && (gooeyLife[index].Hours >= 22))) && (checkOnQuest[index].Status == 0) && (questBatchSendingCheck4[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
           {/if}
 
-          {#if (gooeyLife[index].Days >= 5) && (checkOnQuest[index] == 0) && (questBatchSendingCheck5[index] == 0)}
+          {#if (gooeyLife[index].Days >= 5) && (checkOnQuest[index].Status == 0) && (questBatchSendingCheck5[index] == 0)}
             <span style="display: none;">{questBatchSending.push(stat.tokenId)}</span>
             <!-- <span style="display: none;">{questBatchSending.push(userGooeys[0][parseInt(questBatchSendingCheck5.indexOf(5))])}</span> -->
           {/if}
