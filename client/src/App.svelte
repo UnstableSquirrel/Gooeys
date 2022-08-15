@@ -78,7 +78,7 @@
   }
 
   function logout() {
-    window.userAddress = null;
+    window.userAddress = null
     wallet = window.userAddress
     window.localStorage.removeItem("userAddress")
   }

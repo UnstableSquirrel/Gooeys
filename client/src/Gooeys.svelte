@@ -723,12 +723,15 @@
 
     {#await getData()}
     <p style="font-size: 25px; font-weight: 700; color: white; text-shadow: -1px -1px 0 #17314f, 1px -1px 0 #17314f, -1px 1px 0 #17314f, 1px 1px 0 #17314f;">Loading ...</p>
-    {:then loaded}
+    {:then}
+
     {#if userGooeys[0].length == 0}
     <div id="Gooey-Container">
-      <div id="No-Gooeys">You don't have any Gooeys in your Wallet. Get one at <a href="https://opensea.io/collection/gooeysp2e">Opensea!</a></div>
+      <div id="No-Gooeys">You don't have any Gooeys in your Wallet. Get one at <a href="https://opensea.io/collection/gooeysp2e">Opensea!</a>
+      </div>
     </div>
     {/if}
+
     {#if userGooeys[0].length > 0}
     <div style="display: grid; justify-items: center; margin: 0px 0px 45px 0px; width: 240px;">
       <h3><span style="font-size: 20px; font-weight: 700;">Come back in</span></h3>
@@ -1057,10 +1060,12 @@
 
 
 
-    {:catch error}
+    <!-- {:catch error} -->
+    {#if (userGooeys == null) || (userGooeys == undefined)}
     <div id="Gooey-Container">
       <div id="No-Gooeys">Something went wrong!</div>
     </div>
+    {/if}
     <!-- <div id="Gooey-Container">
       <div id="No-Gooeys">You don't have any Gooeys in your Wallet. Get one at <a href="https://opensea.io/collection/gooeysp2e">Opensea!</a></div>
     </div> -->
