@@ -60,7 +60,7 @@
 
     let soonestReturner = []
     let comeBackIn = []
-    let loaded = false
+    // let loaded = false
 
 
 
@@ -331,12 +331,15 @@
         questTime = questTime
         tumbleCoolDown = tumbleCoolDown
 
-        // console.log(temp, gooeyLife, questTime, tumbleCoolDown)
-        // console.log(checkOnQuest)
+        // console.log("temp: ", temp)
+        // console.log("gooeyLife: ", gooeyLife)
+        // console.log("questTime: ", questTime)
+        // console.log("tumbleCoolDown: ", tumbleCoolDown)
+        // console.log("checkOnQuest: ", checkOnQuest)
         // console.log(allStats)
         
         // window.localStorage.deleteItem("selectedQuests")
-        // console.log(questBatchCompletion)
+        // console.log("questBatchCompletion: ", questBatchCompletion)
         soonestReturner.sort((a, b) => a - b)
         comeBackIn = {
               "Days" : Math.floor(soonestReturner[0] / (3600 * 24)), 
@@ -348,7 +351,7 @@
         // console.log(questBatchSending)
         // console.log(feedForQuest0, feedForQuest1, feedForQuest2, feedForQuest3, feedForQuest4, feedForQuest5)
         // console.log(tumbleCoolDown)
-        loaded = true
+        // loaded = true
       }
 
 
@@ -532,6 +535,7 @@
         let batch = new web3.BatchRequest()
         for (let i = 0; i < questBatchCompletion.length; i++) {
           batch.add(contract.methods.completeQuest(questBatchCompletion[i]).send.request({ from: wallet, gasPrice : gas }))
+          console.log(questBatchCompletion[i])
         }
         batch.execute()
         console.log(batch)
@@ -543,6 +547,7 @@
         let batch = new web3.BatchRequest()
         for (let i = 0; i < questBatchSending.length; i++) {
           batch.add(contract.methods.startQuest(questBatchSending[i], parseInt(window.localStorage.getItem(questBatchSending[i]))).send.request({ from: wallet, gasPrice : gas }))
+          console.log(questBatchSending[i])
         }
         batch.execute()
         console.log(batch)
@@ -894,7 +899,7 @@
 
         {#if (questTime[index].Days == 0) && (questTime[index].Hours == 0) && (questTime[index].Minutes == 0) && (questTime[index].Seconds == 0) && (checkOnQuest[index].Status > 0)}
         <div style="background-color: rgb(151, 255, 125); justify-content: center; height: 34px;">
-          <p style="justify-content: center; font-size: 17px; font-weight: 700;"><span style="display: none; width: fit-content;">{questBatchCompletion.push(userGooeys[0][index])}</span>Quest Completed</p>
+          <p style="justify-content: center; font-size: 17px; font-weight: 700;"><span style="display: none; width: fit-content;">{questBatchCompletion.push(allStats[index].tokenId)}</span>Quest Completed</p>
         </div>
         {/if}
 
