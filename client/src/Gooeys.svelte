@@ -482,7 +482,7 @@
         let n = parseInt(btn)
         console.log(n)
         transferTokenId = n
-        transferGooey()
+        // transferGooey()
       }
 
       let gooeyReceiverWallet
@@ -1264,7 +1264,7 @@
                   <p id="chance6">{questChance6}%</p>
                 </div>
                 <div>
-                  <button on:click="{() => getQuestId(5)}" on:mouseup="{closeModal0}">Send to Quest</button>
+                  <button on:click="{() => getQuestId(5)}" on:mouseup="{closeModal1}">Send to Quest</button>
                 </div>
               </div>
               
